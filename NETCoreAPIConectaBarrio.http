@@ -1,0 +1,6 @@
+@NETCoreAPIConectaBarrio_HostAddress = http://localhost:5249
+
+GET {{NETCoreAPIConectaBarrio_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
