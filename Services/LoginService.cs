@@ -4,7 +4,7 @@ namespace NETCoreAPIConectaBarrio.Services
 {
     public class LoginService : ILoginService
     {
-        public bool ChangePassword(string email)
+        public bool ForgotPassword(string email)
         {
             throw new NotImplementedException();
         }
