@@ -2,9 +2,9 @@
 {
     public class SQLTypeConverter
     {
-        public static string ParseTypeToString(Type type, object value)
+        public static string? ParseTypeToString(Type type, object value)
         {
-            string res = "";
+            string? res = "";
             switch (type.Name)
             {
                 case "Int32":

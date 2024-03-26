@@ -1,34 +1,79 @@
-﻿using NETCoreAPIConectaBarrio.DTOs;
+﻿using NETCoreAPIConectaBarrio.Helpers;
 using NETCoreAPIConectaBarrio.Models;
 using NETCoreAPIConectaBarrio.Services.Interfaces;
+using System.Data;
 
 namespace NETCoreAPIConectaBarrio.Services
 {
     public class ComplaintService : IComplaintService
     {
+        private const string TABLE = "SYS_T_COMPLAINTS";
+    
+        private IUserService _userSvc;
+
+        public ComplaintService(IUserService userSvc)
+        {
+            _userSvc = userSvc;
+        }
+
         public bool CreateComplaint(ComplaintModel complaint)
         {
-            throw new NotImplementedException();
+            bool res = false;
+
+            if (complaint != null)
+            {
+                string[] fields = ["IDCOMPLAINT_TYPE", "IDPRIORITY", "COMPLAINT_TITLE", "COMPLAINT_DESCRIPTION", "CREATION_USER", "CREATION_DATE", "ACTIVE"];
+                object[] values = [complaint.IdComplaintType, complaint.IdPriority, complaint.Title, complaint.Description, complaint.CreationUser, complaint.CreationDate, true];
+                res = SQLConnectionHelper.InsertBBDD(TABLE, fields, values);
+            }
+
+            return res;
         }
 
-        public bool DeleteComplaint(int idComplaint)
+        public bool DeleteComplaint(int idUser, int idComplaint)
         {
-            throw new NotImplementedException();
+            // Si el usuario es admin, se hace un borrado fisico, si no, un borrado logico
+            if (this._userSvc.GetUserRole(idUser) == Enums.EnumRoles.ADMIN)
+                return SQLConnectionHelper.DeleteBBDD(TABLE, ["IDCOMPLAINT_TYPE"], [idComplaint], [SQLRelationType.EQUAL]);
+            else
+                return SQLConnectionHelper.UpdateBBDD(TABLE, ["ACTIVE"], [false], ["IDCOMPLAINT_TYPE"], [idComplaint]);
+
         }
 
-        public List<ComplaintDTO> GetAllComplaints()
+        public List<ComplaintModel> GetAllComplaints()
         {
-            throw new NotImplementedException();
+            List<ComplaintModel> complaints = [];
+
+            DataTable dt = SQLConnectionHelper.GetResultTable(TABLE, [], [], []);
+            foreach (DataRow row in dt.Rows)
+                complaints.Add(new ComplaintModel(row));
+
+            return complaints;
         }
 
-        public ComplaintDTO GetComplaint(int idComplaint)
+        public ComplaintModel? GetComplaint(int idComplaint)
         {
-            throw new NotImplementedException();
+            ComplaintModel? complaint = null;
+            DataTable dt = SQLConnectionHelper.GetResultTable(TABLE, ["IDCOMPLAINT"], [idComplaint], [SQLRelationType.EQUAL]);
+
+            if (dt != null && dt.Rows.Count > 0)
+                complaint = new ComplaintModel(dt.Rows[0]);
+
+            return complaint;
         }
 
-        public bool UpdateComplaint(ComplaintModel complaint)
+        public bool UpdateComplaint(ComplaintModel complaint, int idUser)
         {
-            throw new NotImplementedException();
+            if (complaint != null)
+            {
+                string[] fields = ["IDCOMPLAINT_TYPE", "IDPRIORITY", "COMPLAINT_TITLE", "COMPLAINT_DESCRIPTION", "MODIFICATION_USER", "MODIFICATION_DATE", "ACTIVE"];
+                object[] values = [complaint.IdComplaintType, complaint.IdPriority, complaint.Title, complaint.Description, idUser, DateTime.Now, complaint.Active];
+                string[] fieldsFilter = ["IDCOMPLAINT"];
+                object[] valuesFilter = [complaint.IdComplaint];
+
+                return SQLConnectionHelper.UpdateBBDD(TABLE, fields, values, fieldsFilter, valuesFilter);
+            }
+            else return false;
         }
     }
 }

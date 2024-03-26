@@ -1,34 +1,60 @@
-﻿using NETCoreAPIConectaBarrio.DTOs;
+﻿using NETCoreAPIConectaBarrio.Helpers;
 using NETCoreAPIConectaBarrio.Models;
 using NETCoreAPIConectaBarrio.Services.Interfaces;
+using System.Data;
 
 namespace NETCoreAPIConectaBarrio.Services
 {
     public class NewsService : INewsService
     {
-        public bool CreateNew(NewsModel news)
+        private const string TABLE = "SYS_T_NEWS";
+        private IUserService _userService;
+
+        public NewsService(IUserService userService)
         {
-            throw new NotImplementedException();
+            _userService = userService;
         }
 
-        public bool DeleteNew(int idNew)
+        public bool CreateNew(NewsModel news, int idUser)
         {
-            throw new NotImplementedException();
+            string[] fields = ["IDCATEGORY", "NAME", "DESCRIPTION", "CREATION_USER", "CREATION_DATE", "START_DATE", "END_DATE", "ACTIVE"];
+            object[] values = [news.IdCategory, news.Name, news.Description, idUser, DateTime.Now, news.StartDate, news.EndDate, news.Active];
+            return SQLConnectionHelper.InsertBBDD(TABLE, fields, values);
         }
 
-        public List<NewsDTO> GetAllNews()
+        public bool DeleteNew(int idNew, int idUser)
         {
-            throw new NotImplementedException();
+            if (this._userService.GetUserRole(idUser) == Enums.EnumRoles.ADMIN)
+                return SQLConnectionHelper.DeleteBBDD(TABLE, ["IDNEW"], [idNew], [SQLRelationType.EQUAL]);
+            else
+                return SQLConnectionHelper.UpdateBBDD(TABLE, ["ACTIVE"], [false], ["IDNEW"], [idNew]);
         }
 
-        public NewsDTO GetNewData(int idNew)
+        public List<NewsModel> GetAllNews()
         {
-            throw new NotImplementedException();
+            List<NewsModel> res = [];
+            DataTable dt = SQLConnectionHelper.GetResultTable(TABLE, [], [], []);
+            foreach (DataRow row in dt.Rows)
+                res.Add(new NewsModel(row));
+
+            return res;
         }
 
-        public bool UpdateNew(NewsModel news)
+        public NewsModel GetNewData(int idNew)
         {
-            throw new NotImplementedException();
+            NewsModel res = null;
+            DataTable dt = SQLConnectionHelper.GetResultTable(TABLE, [], [], []);
+            if(dt != null && dt.Rows.Count > 0)
+                res = new NewsModel(dt.Rows[0]);
+
+            return res;
+        }
+
+        public bool UpdateNew(NewsModel news, int idUser)
+        {
+            string[] fields = ["IDCATEGORY", "NAME", "DESCRIPTION", "MODIFICATION_USER", "MODIFICATION_DATE", "START_DATE", "END_DATE", "ACTIVE"];
+            object[] values = [news.IdCategory, news.Name, news.Description, idUser, DateTime.Now, news.StartDate, news.EndDate, news.Active];
+            return SQLConnectionHelper.UpdateBBDD(TABLE, fields, values, ["IDNEW"], [news.IdNew]);
         }
     }
 }

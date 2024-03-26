@@ -8,33 +8,36 @@ namespace NETCoreAPIConectaBarrio.Models
     {
         public int IdUser { get; set; }
         public EnumRoles IdRole { get; set; }
-        public string Name { get; set; }
-        public string Surname { get; set; }
-        public string Username { get; set; }
-        public string Password { get; set; }
-        public string Email { get; set; }
+        public string? Name { get; set; }
+        public string? Surname { get; set; }
+        public string? Username { get; set; }
+        public string? Password { get; set; }
+        public string? Email { get; set; }
         public int CreationUser { get; set; }
         public DateTime CreationDate { get; set; }
-        public int ModificationUser { get; set; }
-        public DateTime ModificationDate { get; set;}
+        public int? ModificationUser { get; set; }
+        public DateTime? ModificationDate { get; set;}
         public bool Active { get; set; }
-        
+        public bool IsBlocked { get; set; }
+
+
         public UserModel() { }
 
-        public UserModel(MySqlDataReader dr)
+        public UserModel(DataRow row)
         {
-            IdUser = dr.GetInt32("IDUSER");
-            IdRole = (EnumRoles)dr.GetInt32("IDROLE");
-            Name = dr.GetString("NAME");
-            Surname = dr.GetString("SURNAME");
-            Username = dr.GetString("USERNAME");
-            Password = dr.GetString("PASSWORD");
-            Email = dr.GetString("EMAIL");
-            CreationUser = dr.GetInt32("CREATION_USER");
-            CreationDate = dr.GetDateTime("CREATION_DATE");
-            ModificationUser = dr.GetInt32("MODIFICATION_USER");
-            ModificationDate = dr.GetDateTime("MODIFICATION_DATE");
-            Active = dr.GetBoolean("ACTIVE");
+            IdUser = row.Field<int>("IDUSER");
+            IdRole = (EnumRoles)row.Field<int>("IDROLE");
+            Name = row.Field<string?>("NAME");
+            Surname = row.Field<string?>("SURNAME");
+            Username = row.Field<string?>("USERNAME");
+            Password = row.Field<string?>("PASSWORD");
+            Email = row.Field<string?>("EMAIL");
+            CreationUser = row.Field<int>("CREATION_USER");
+            CreationDate = row.Field<DateTime>("CREATION_DATE");
+            ModificationUser = row.Field<int?>("MODIFICATION_USER");
+            ModificationDate = row.Field<DateTime?>("MODIFICATION_DATE");
+            Active = row.Field<bool>("ACTIVE");
+            IsBlocked = row.Field<bool>("IS_BLOCKED");
         }
     }
 }

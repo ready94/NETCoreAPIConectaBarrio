@@ -2,6 +2,7 @@
 using MySql.Data.MySqlClient;
 using NETCoreAPIConectaBarrio.Helpers;
 using NETCoreAPIConectaBarrio.Models;
+using System.Data;
 
 namespace NETCoreAPIConectaBarrio.Controllers
 {
@@ -19,7 +20,7 @@ namespace NETCoreAPIConectaBarrio.Controllers
         public ActionResult<bool> InsertTest([FromBody] string table)
         {
             string[] fields = ["IDTEST", "NAME", "CREATIONDATE"];
-            List<object> values = [3, "TEST_SWAGGER", DateOnly.FromDateTime(DateTime.Now)];
+            List<object> values = [4, "TEST_SWAGGER", DateOnly.FromDateTime(DateTime.Now)];
 
             return SQLConnectionHelper.InsertBBDD(table, fields, values.ToArray());
         }
@@ -59,5 +60,20 @@ namespace NETCoreAPIConectaBarrio.Controllers
             return SQLConnectionHelper.UpdateBBDD(table, fields, values, fieldsFilter, valuesFilter);
         }
 
+        [HttpPost("getResultTable")]
+        public ActionResult<DataTable> GetResultTableTest([FromBody] string table)
+        {
+            string[] fields = ["IDTEST"];
+            object[] values = [3];
+            string[] relations = ["="];
+            DataTable res = SQLConnectionHelper.GetResultTable(table, fields, values, relations);
+
+            if(res != null)
+            {
+                Console.WriteLine("Prueba");
+            }
+            
+            return res;
+        }
     }
 }
