@@ -1,6 +1,7 @@
 ﻿using NETCoreAPIConectaBarrio.Helpers;
 using NETCoreAPIConectaBarrio.Models;
 using NETCoreAPIConectaBarrio.Services.Interfaces;
+using NETCoreAPIConectaBarrio.Enums;
 using System.Data;
 
 namespace NETCoreAPIConectaBarrio.Services
@@ -24,7 +25,7 @@ namespace NETCoreAPIConectaBarrio.Services
 
         public bool DeleteNew(int idNew, int idUser)
         {
-            if (this._userService.GetUserRole(idUser) == Enums.EnumRoles.ADMIN)
+            if (this._userService.GetUserRole(idUser) == EnumRoles.ADMIN)
                 return SQLConnectionHelper.DeleteBBDD(TABLE, ["IDNEW"], [idNew], [SQLRelationType.EQUAL]);
             else
                 return SQLConnectionHelper.UpdateBBDD(TABLE, ["ACTIVE"], [false], ["IDNEW"], [idNew]);
@@ -33,19 +34,19 @@ namespace NETCoreAPIConectaBarrio.Services
         public List<NewsModel> GetAllNews()
         {
             List<NewsModel> res = [];
-            DataTable dt = SQLConnectionHelper.GetResultTable(TABLE, [], [], []);
+            DataTable dt = SQLConnectionHelper.GetResultTable(TABLE);
+           
             foreach (DataRow row in dt.Rows)
                 res.Add(new NewsModel(row));
 
             return res;
         }
 
-        public NewsModel GetNewData(int idNew)
+        public NewsModel? GetNewData(int idNew)
         {
             NewsModel res = null;
-            DataTable dt = SQLConnectionHelper.GetResultTable(TABLE, [], [], []);
-            if(dt != null && dt.Rows.Count > 0)
-                res = new NewsModel(dt.Rows[0]);
+            DataRow? row = SQLConnectionHelper.GetResult(TABLE, ["IDNEW"], [idNew], [SQLRelationType.EQUAL]);
+            res = new NewsModel(row);
 
             return res;
         }

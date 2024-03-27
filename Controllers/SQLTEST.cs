@@ -40,14 +40,9 @@ namespace NETCoreAPIConectaBarrio.Controllers
             string[] fields = ["IDTEST"];
             object[] values = [3];
             string[] relations = ["="];
-            MySqlDataReader res = SQLConnectionHelper.GetResult(table, fields, values, relations);
+            DataRow res = SQLConnectionHelper.GetResult(table, fields, values, relations);
 
-            string result = "";
-            while (res.Read())
-            {
-                result += res.ToString();
-            }
-            return result;
+            return res.ToString();
         }
 
         [HttpPost("update")]

@@ -3,6 +3,7 @@ using NETCoreAPIConectaBarrio.Enums;
 using NETCoreAPIConectaBarrio.Helpers;
 using NETCoreAPIConectaBarrio.Models;
 using NETCoreAPIConectaBarrio.Services.Interfaces;
+using NETCoreAPIConectaBarrio.Enums;
 using System.Data;
 
 namespace NETCoreAPIConectaBarrio.Services
@@ -15,7 +16,7 @@ namespace NETCoreAPIConectaBarrio.Services
             return SQLConnectionHelper.UpdateBBDD(TABLE, ["IS_BLOCKED"], [true], ["IDUSER"], [idUser]);
         }
 
-        public bool CreateUser(UserDTO user)
+        public bool CreateUser(UserModel user)
         {
             bool res = false;
             if (user != null)
@@ -31,7 +32,7 @@ namespace NETCoreAPIConectaBarrio.Services
         public List<UserModel> GetAllUsers()
         {
             List<UserModel> users = new();
-            DataTable dt = SQLConnectionHelper.GetResultTable(TABLE, [], [], []);
+            DataTable dt = SQLConnectionHelper.GetResultTable(TABLE);
             foreach (DataRow row in dt.Rows)
             {
                 users.Add(new UserModel(row));
@@ -39,15 +40,11 @@ namespace NETCoreAPIConectaBarrio.Services
             return users;
         }
 
-        public UserModel GetUserData(int idUser)
+        public UserModel? GetUserData(int idUser)
         {
-            UserModel user = null;
-            DataTable dt = SQLConnectionHelper.GetResultTable(TABLE, ["IDUSER"], [idUser], [SQLRelationType.EQUAL]);
-            if (dt != null && dt.Rows.Count > 0)
-            {
-                user = new UserModel(dt.Rows[0]);
-            }
-            return user;
+            DataRow? row = SQLConnectionHelper.GetResult(TABLE, ["IDUSER"], [idUser], [SQLRelationType.EQUAL]);
+            
+            return new UserModel(row);
         }
 
         public bool UnblockUser(int idUser)
@@ -70,17 +67,14 @@ namespace NETCoreAPIConectaBarrio.Services
             return res;
         }
 
-        public EnumRoles GetUserRole(int idUser)
+        public EnumRoles? GetUserRole(int idUser)
         {
             string[] fieldsFilter = ["IDUSER"];
             object[] valuesFilter = [idUser];
-            UserModel user = null;
 
-            DataTable dt = SQLConnectionHelper.GetResultTable(TABLE, fieldsFilter, valuesFilter, [SQLRelationType.EQUAL]);
-            if (dt != null && dt.Rows.Count > 0)
-                user = new(dt.Rows[0]);
+            DataRow? row = SQLConnectionHelper.GetResult(TABLE, fieldsFilter, valuesFilter, [SQLRelationType.EQUAL]);
 
-            return user.IdRole;
+            return (EnumRoles)(row?.Field<EnumRoles>("IDROLE"));
 
         }
     }

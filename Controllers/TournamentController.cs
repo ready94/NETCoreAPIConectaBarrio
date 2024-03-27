@@ -9,9 +9,9 @@ namespace NETCoreAPIConectaBarrio.Controllers
     [Route("[controller]")]
     public class TournamentController: ControllerBase   
     {
-        private ITournamentService _tournamentSvc;
+        private IActivityService _tournamentSvc;
 
-        public TournamentController(ITournamentService tournamentSvc)
+        public TournamentController(IActivityService tournamentSvc)
         {
             _tournamentSvc = tournamentSvc;
         }
@@ -22,26 +22,26 @@ namespace NETCoreAPIConectaBarrio.Controllers
             return Ok(_tournamentSvc.CreateTournament(tournament));
         }
 
-        [HttpPost("updateTournament")]
-        public ActionResult<bool> UpdateTournament([FromBody] TournamentModel tournament)
+        [HttpPost("updateTournament/{idUser}")]
+        public ActionResult<bool> UpdateTournament([FromBody] TournamentModel tournament, int idUser)
         {
-            return Ok(_tournamentSvc.UpdateTournament(tournament));
+            return Ok(_tournamentSvc.UpdateTournament(tournament, idUser));
         }
 
-        [HttpGet("deleteTournament/{idTournament}")]
-        public ActionResult<bool> DeleteTournament(int idTournament)
+        [HttpPost("deleteTournament/{idUser}")]
+        public ActionResult<bool> DeleteTournament([FromBody] int idTournament, int idUser)
         {
-            return Ok(_tournamentSvc.DeleteTournament(idTournament));
+            return Ok(_tournamentSvc.DeleteTournament(idTournament, idUser));
         }
 
         [HttpGet("getTournamentData/{idTournament}")]
-        public ActionResult<TournamentDTO> GetTournamentData(int idTournament)
+        public ActionResult<TournamentModel> GetTournamentData(int idTournament)
         {
             return Ok(_tournamentSvc.GetTournamentData(idTournament));
         }
 
         [HttpGet("getAllTournaments")]
-        public ActionResult<List<TournamentDTO>> GetAllTournaments()
+        public ActionResult<List<TournamentModel>> GetAllTournaments()
         {
             return Ok(_tournamentSvc.GetAllTournaments());
         }

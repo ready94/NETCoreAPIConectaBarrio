@@ -68,37 +68,46 @@ namespace NETCoreAPIConectaBarrio.Helpers
             return res.ToArray();
         }
 
-        public static MySqlDataReader? GetResult(string table, string[] fields, object[] values, string[] relations)
+        public static DataRow? GetResult(string table, string[]? fields = null, object[]? values = null, string[]? relations = null)
         {
             MySqlConnection? conn = ConnectBBDD();
-            string sql = "SELECT * FROM `" + table + "`";
-            MySqlDataReader? dr = null;
+            DataTable dt = new DataTable();
+            DataRow res = null;
 
             if (conn != null)
             {
                 conn.Open();
-                if (values.Length == fields.Length == relations.Length > 0)
+                string sql = "SELECT * FROM `" + table + "`";
+
+                if (fields?.Length == values?.Length && fields?.Length == relations?.Length && fields?.Length > 0)
                 {
                     sql += " WHERE ";
                     for (int i = 0; i < fields.Length; i++)
                     {
-                        sql += "`" + fields[i] + "`" + relations[i] + "'" + values[i] + "'";
-                        if (i < fields.Length - 1)
-                            sql += ", ";
+                        sql += "`" + fields?[i] + "`" + relations?[i] + "'" + values?[i] + "'";
+                        if (i < fields?.Length - 1)
+                            sql += " AND ";
                     }
                 }
 
-                sql += ";";
+                sql += " LIMIT 1";
 
                 MySqlCommand cmd = new MySqlCommand(sql, conn);
-                dr = cmd.ExecuteReader();
+                using (MySqlDataReader reader = cmd.ExecuteReader())
+                {
+                    dt.Load(reader);
+                }
 
+                if(dt.Rows.Count > 0) { res = dt.Rows[0]; }
+                
+                conn.Close();
             }
 
-            return dr;
+            return res;
         }
 
-        public static DataTable GetResultTable(string table, string[] fields, object[] values, string[] relations)
+
+        public static DataTable GetResultTable(string table, string[]? fields = null, object[]? values = null, string[]? relations = null)
         {
             MySqlConnection? conn = ConnectBBDD();
             DataTable dt = new DataTable();
@@ -108,13 +117,13 @@ namespace NETCoreAPIConectaBarrio.Helpers
                 conn.Open();
                 string sql = "SELECT * FROM `" + table + "`";
 
-                if (fields.Length == values.Length && fields.Length == relations.Length && fields.Length > 0)
+                if (fields?.Length == values?.Length && fields?.Length == relations?.Length && fields?.Length > 0)
                 {
                     sql += " WHERE ";
-                    for (int i = 0; i < fields.Length; i++)
+                    for (int i = 0; i < fields?.Length; i++)
                     {
-                        sql += "`" + fields[i] + "`" + relations[i] + "'" + values[i] + "'";
-                        if (i < fields.Length - 1)
+                        sql += "`" + fields?[i] + "`" + relations?[i] + "'" + values?[i] + "'";
+                        if (i < fields?.Length - 1)
                             sql += " AND ";
                     }
                 }

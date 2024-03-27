@@ -8,13 +8,13 @@ namespace NETCoreAPIConectaBarrio.Controllers
     public class LoginController : ControllerBase
     {
         [HttpPost("login")]
-        public ActionResult<bool> Login([FromBody] LoginRequestModel login)
+        public ActionResult<bool> Login([FromBody] LoginModel login)
         {
           return Ok(true);
         }
 
         [HttpPost("forgotPassword")]
-        public ActionResult<bool> ForgotPassword([FromBody] LoginRequestModel login)
+        public ActionResult<bool> ForgotPassword([FromBody] LoginModel login)
         {
             return Ok(true);
         }

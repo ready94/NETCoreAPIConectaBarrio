@@ -1,16 +1,17 @@
 ﻿using NETCoreAPIConectaBarrio.Helpers;
 using NETCoreAPIConectaBarrio.Models;
 using NETCoreAPIConectaBarrio.Services.Interfaces;
+using NETCoreAPIConectaBarrio.Enums;
 using System.Data;
 
 namespace NETCoreAPIConectaBarrio.Services
 {
-    public class TournamentService : ITournamentService
+    public class ActivityService : IActivityService
     {
         private const string TABLE = "SYS_T_TOURNAMENTS";
         private IUserService _userSvc;
 
-        public TournamentService(IUserService userSvc)
+        public ActivityService(IUserService userSvc)
         {
             _userSvc = userSvc;
         }
@@ -26,7 +27,7 @@ namespace NETCoreAPIConectaBarrio.Services
 
         public bool DeleteTournament(int idTournament, int idUser)
         {
-            if (this._userSvc.GetUserRole(idUser) == Enums.EnumRoles.ADMIN)
+            if (this._userSvc.GetUserRole(idUser) == EnumRoles.ADMIN)
                 return SQLConnectionHelper.DeleteBBDD(TABLE, ["IDTOURNAMENT"], [idTournament], [SQLRelationType.EQUAL]);
             else
                 return SQLConnectionHelper.UpdateBBDD(TABLE, ["ACTIVE"], [false], ["IDTOURNAMENT"], [idTournament]);
@@ -35,7 +36,7 @@ namespace NETCoreAPIConectaBarrio.Services
         public List<TournamentModel> GetAllTournaments()
         {
             List<TournamentModel> res = [];
-            DataTable dt = SQLConnectionHelper.GetResultTable(TABLE, [], [], []);
+            DataTable dt = SQLConnectionHelper.GetResultTable(TABLE);
 
             foreach (DataRow row in dt.Rows)
                 res.Add(new TournamentModel(row));
@@ -43,15 +44,11 @@ namespace NETCoreAPIConectaBarrio.Services
             return res;
         }
 
-        public TournamentModel GetTournamentData(int idTournament)
+        public TournamentModel? GetTournamentData(int idTournament)
         {
-            TournamentModel res = null;
-            DataTable dt = SQLConnectionHelper.GetResultTable(TABLE, ["IDTOURNAMENT"], [idTournament], [SQLRelationType.EQUAL]);
+            DataRow? row = SQLConnectionHelper.GetResult(TABLE, ["IDTOURNAMENT"], [idTournament], [SQLRelationType.EQUAL]);
 
-            if (dt != null && dt.Rows.Count > 0)
-                res = new TournamentModel(dt.Rows[0]);
-
-            return res;
+            return new TournamentModel(row);
         }
 
         public bool UpdatePlayerNumbers(TournamentModel tournament)

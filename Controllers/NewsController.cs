@@ -15,32 +15,32 @@ namespace NETCoreAPIConectaBarrio.Controllers
             _newsSvc = newsSvc;
         }
 
-        [HttpPost("createNew")]
-        public ActionResult<bool> CreateNew([FromBody] NewsModel news)
+        [HttpPost("createNew/{idUser}")]
+        public ActionResult<bool> CreateNew([FromBody] NewsModel news, int idUser)
         {
-            return Ok(_newsSvc.CreateNew(news));
+            return Ok(_newsSvc.CreateNew(news, idUser));
         }
 
-        [HttpPost("updateNew")]
-        public ActionResult<bool> UpdateNew([FromBody] NewsModel news)
+        [HttpPost("updateNew/{idUser}")]
+        public ActionResult<bool> UpdateNew([FromBody] NewsModel news, int idUser)
         {
-            return Ok(_newsSvc.UpdateNew(news));
+            return Ok(_newsSvc.UpdateNew(news, idUser));
         }
 
-        [HttpGet("deleteNew")]
-        public ActionResult<bool> DeleteNew(int idNew)
+        [HttpPost("deleteNew/{idUser}")]
+        public ActionResult<bool> DeleteNew([FromBody] int idNew, int idUser)
         {
-            return Ok(_newsSvc.DeleteNew(idNew));
+            return Ok(_newsSvc.DeleteNew(idNew, idUser));
         }
 
         [HttpGet("getNewData/{idNew}")]
-        public ActionResult<NewsDTO> GetNewData(int idNew)
+        public ActionResult<NewsModel> GetNewData(int idNew)
         {
             return Ok(_newsSvc.GetNewData(idNew));
         }
 
         [HttpGet("getAllNews")]
-        public ActionResult<List<NewsDTO>> GetAllNews()
+        public ActionResult<List<NewsModel>> GetAllNews()
         {
             return Ok(_newsSvc.GetAllNews());
         }

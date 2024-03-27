@@ -1,6 +1,7 @@
 ﻿using NETCoreAPIConectaBarrio.Helpers;
 using NETCoreAPIConectaBarrio.Models;
 using NETCoreAPIConectaBarrio.Services.Interfaces;
+using NETCoreAPIConectaBarrio.Enums;
 using System.Data;
 
 namespace NETCoreAPIConectaBarrio.Services
@@ -33,7 +34,7 @@ namespace NETCoreAPIConectaBarrio.Services
         public bool DeleteComplaint(int idUser, int idComplaint)
         {
             // Si el usuario es admin, se hace un borrado fisico, si no, un borrado logico
-            if (this._userSvc.GetUserRole(idUser) == Enums.EnumRoles.ADMIN)
+            if (this._userSvc.GetUserRole(idUser) == EnumRoles.ADMIN)
                 return SQLConnectionHelper.DeleteBBDD(TABLE, ["IDCOMPLAINT_TYPE"], [idComplaint], [SQLRelationType.EQUAL]);
             else
                 return SQLConnectionHelper.UpdateBBDD(TABLE, ["ACTIVE"], [false], ["IDCOMPLAINT_TYPE"], [idComplaint]);
@@ -44,7 +45,7 @@ namespace NETCoreAPIConectaBarrio.Services
         {
             List<ComplaintModel> complaints = [];
 
-            DataTable dt = SQLConnectionHelper.GetResultTable(TABLE, [], [], []);
+            DataTable dt = SQLConnectionHelper.GetResultTable(TABLE);
             foreach (DataRow row in dt.Rows)
                 complaints.Add(new ComplaintModel(row));
 
@@ -53,13 +54,9 @@ namespace NETCoreAPIConectaBarrio.Services
 
         public ComplaintModel? GetComplaint(int idComplaint)
         {
-            ComplaintModel? complaint = null;
-            DataTable dt = SQLConnectionHelper.GetResultTable(TABLE, ["IDCOMPLAINT"], [idComplaint], [SQLRelationType.EQUAL]);
+            DataRow? row = SQLConnectionHelper.GetResult(TABLE, ["IDCOMPLAINT"], [idComplaint], [SQLRelationType.EQUAL]);
 
-            if (dt != null && dt.Rows.Count > 0)
-                complaint = new ComplaintModel(dt.Rows[0]);
-
-            return complaint;
+            return new ComplaintModel(row);
         }
 
         public bool UpdateComplaint(ComplaintModel complaint, int idUser)

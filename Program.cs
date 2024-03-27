@@ -16,7 +16,7 @@ builder.Services.AddTransient<MySqlConnection>(_ =>
 builder.Services.AddTransient<IComplaintService, ComplaintService>();
 builder.Services.AddTransient<ILoginService, LoginService>();
 builder.Services.AddTransient<INewsService, NewsService>();
-builder.Services.AddTransient<ITournamentService, TournamentService>();
+builder.Services.AddTransient<IActivityService, ActivityService>();
 builder.Services.AddTransient<IUserService, UserService>();
 
 var app = builder.Build();
