@@ -28,7 +28,7 @@ namespace NETCoreAPIConectaBarrio.Services
             if (this._userService.GetUserRole(idUser) == EnumRoles.ADMIN)
                 return SQLConnectionHelper.DeleteBBDD(TABLE, ["IDNEW"], [idNew], [SQLRelationType.EQUAL]);
             else
-                return SQLConnectionHelper.UpdateBBDD(TABLE, ["ACTIVE"], [false], ["IDNEW"], [idNew]);
+                return SQLConnectionHelper.UpdateBBDD(TABLE, ["ACTIVE"], [false], ["IDNEW"], [idNew], [SQLRelationType.EQUAL]);
         }
 
         public List<NewsModel> GetAllNews()
@@ -55,7 +55,7 @@ namespace NETCoreAPIConectaBarrio.Services
         {
             string[] fields = ["IDCATEGORY", "NAME", "DESCRIPTION", "MODIFICATION_USER", "MODIFICATION_DATE", "START_DATE", "END_DATE", "ACTIVE"];
             object[] values = [news.IdCategory, news.Name, news.Description, idUser, DateTime.Now, news.StartDate, news.EndDate, news.Active];
-            return SQLConnectionHelper.UpdateBBDD(TABLE, fields, values, ["IDNEW"], [news.IdNew]);
+            return SQLConnectionHelper.UpdateBBDD(TABLE, fields, values, ["IDNEW"], [news.IdNew], [SQLRelationType.EQUAL]);
         }
     }
 }

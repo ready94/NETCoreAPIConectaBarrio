@@ -17,7 +17,7 @@ namespace NETCoreAPIConectaBarrio.Controllers
         }
 
         [HttpPost("createUser")]
-        public ActionResult<bool> CreateUser([FromBody] UserModel user)
+        public ActionResult<bool> CreateUser([FromBody] NewUserModel user)
         {
             return Ok(_userSvc.CreateUser(user));
         }

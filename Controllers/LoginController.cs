@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NETCoreAPIConectaBarrio.DTOs;
 using NETCoreAPIConectaBarrio.Models;
+using NETCoreAPIConectaBarrio.Services.Interfaces;
 
 namespace NETCoreAPIConectaBarrio.Controllers
 {
@@ -7,16 +9,36 @@ namespace NETCoreAPIConectaBarrio.Controllers
     [Route("[controller]")]
     public class LoginController : ControllerBase
     {
-        [HttpPost("login")]
-        public ActionResult<bool> Login([FromBody] LoginModel login)
+        public ILoginService _loginSvc;
+
+        public LoginController(ILoginService loginSvc)
         {
-          return Ok(true);
+            _loginSvc = loginSvc;
+        }
+
+        [HttpPost("login")]
+        public ActionResult<ResponseResult<string>> Login([FromBody] LoginModel login)
+        {
+            ResponseResult<string> res = new ResponseResult<string>(false, null, "ERROR.ERROR");
+            try
+            {
+                //ResponseResult<string> res = new ResponseResult<string>(false, null, "LOGING.ERROR.NOT_AUTHENTICATED");
+                //ResponseResult<LoginResponse> resLogin = this._loginSvc.AuthenticateUser(login);
+                res = this._loginSvc.Login(login);
+             
+
+            }
+            catch (Exception exc)
+            {
+
+            }
+            return res;
         }
 
         [HttpPost("forgotPassword")]
-        public ActionResult<bool> ForgotPassword([FromBody] LoginModel login)
+        public ActionResult<bool> ForgotPassword([FromBody] ForgotPassword forgotPassword)
         {
-            return Ok(true);
+            return Ok(this._loginSvc.ForgotPassword(forgotPassword));
         }
 
     }

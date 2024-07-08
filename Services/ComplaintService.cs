@@ -34,11 +34,11 @@ namespace NETCoreAPIConectaBarrio.Services
         public bool DeleteComplaint(int idUser, int idComplaint)
         {
             // Si el usuario es admin, se hace un borrado fisico, si no, un borrado logico
-            if (this._userSvc.GetUserRole(idUser) == EnumRoles.ADMIN)
-                return SQLConnectionHelper.DeleteBBDD(TABLE, ["IDCOMPLAINT_TYPE"], [idComplaint], [SQLRelationType.EQUAL]);
-            else
-                return SQLConnectionHelper.UpdateBBDD(TABLE, ["ACTIVE"], [false], ["IDCOMPLAINT_TYPE"], [idComplaint]);
-
+            //if (this._userSvc.GetUserRole(idUser) == EnumRoles.ADMIN)
+            //    return SQLConnectionHelper.DeleteBBDD(TABLE, ["IDCOMPLAINT_TYPE"], [idComplaint], [SQLRelationType.EQUAL]);
+            //else
+            //    return SQLConnectionHelper.UpdateBBDD(TABLE, ["ACTIVE"], [false], ["IDCOMPLAINT_TYPE"], [idComplaint]);
+            return true;
         }
 
         public List<ComplaintModel> GetAllComplaints()
@@ -68,7 +68,7 @@ namespace NETCoreAPIConectaBarrio.Services
                 string[] fieldsFilter = ["IDCOMPLAINT"];
                 object[] valuesFilter = [complaint.IdComplaint];
 
-                return SQLConnectionHelper.UpdateBBDD(TABLE, fields, values, fieldsFilter, valuesFilter);
+                return SQLConnectionHelper.UpdateBBDD(TABLE, fields, values, fieldsFilter, valuesFilter, [SQLRelationType.EQUAL]);
             }
             else return false;
         }

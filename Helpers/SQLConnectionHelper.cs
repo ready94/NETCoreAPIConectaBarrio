@@ -22,52 +22,6 @@ namespace NETCoreAPIConectaBarrio.Helpers
             }
         }
 
-        public static string[] TEST()
-        {
-            MySqlConnection? conn = ConnectBBDD();
-            List<string> res = [];
-
-            if (conn != null)
-            {
-                conn.Open();
-                string sql = "SELECT * FROM sys_t_users";
-                MySqlCommand cmd = new MySqlCommand(sql, conn);
-                MySqlDataReader dr = cmd.ExecuteReader();
-
-                while (dr.Read())
-                {
-                    for (int i = 0; i < dr.FieldCount; i++)
-                        res.Add(dr.GetName(i) + ": " + dr.GetValue(i));
-
-                    res.Add("----------------------");
-                }
-                dr.Close();
-
-                sql = "INSERT INTO `test` (`IDTEST`, `NAME`, `CREATIONDATE`) VALUES (1, 'BRUNO', '2024-03-23');";
-                cmd = new MySqlCommand(sql, conn);
-                int insert = cmd.ExecuteNonQuery();
-
-                if (insert > 0)
-                {
-                    sql = "SELECT * FROM test";
-                    cmd = new MySqlCommand(sql, conn);
-                    dr = cmd.ExecuteReader();
-
-                    while (dr.Read())
-                    {
-                        for (int i = 0; i < dr.FieldCount; i++)
-                            res.Add(dr.GetName(i) + ": " + dr.GetValue(i));
-
-                        res.Add("----------------------");
-                    }
-                }
-
-                conn.Close();
-            }
-
-            return res.ToArray();
-        }
-
         public static DataRow? GetResult(string table, string[]? fields = null, object[]? values = null, string[]? relations = null)
         {
             MySqlConnection? conn = ConnectBBDD();
@@ -98,8 +52,8 @@ namespace NETCoreAPIConectaBarrio.Helpers
                     dt.Load(reader);
                 }
 
-                if(dt.Rows.Count > 0) { res = dt.Rows[0]; }
-                
+                if (dt.Rows.Count > 0) { res = dt.Rows[0]; }
+
                 conn.Close();
             }
 
@@ -147,7 +101,7 @@ namespace NETCoreAPIConectaBarrio.Helpers
 
             conn?.Open();
 
-            if (conn?.State != ConnectionState.Open)
+            if (conn?.State == ConnectionState.Open)
             {
                 string sql = "INSERT INTO `" + table + "` (";
                 for (int i = 0; i < fields.Length; i++)
@@ -206,7 +160,7 @@ namespace NETCoreAPIConectaBarrio.Helpers
             return res;
         }
 
-        public static bool UpdateBBDD(string table, string[] fields, object[] values, string[] fieldsFilter, object[] valuesFilter)
+        public static bool UpdateBBDD(string table, string[] fields, object[] values, string[] fieldsFilter, object[] valuesFilter, string[] relations)
         {
 
             MySqlConnection? conn = ConnectBBDD();
@@ -226,13 +180,14 @@ namespace NETCoreAPIConectaBarrio.Helpers
                     }
                 }
                 sql += " WHERE ";
-                if (valuesFilter.Length > 0 && fieldsFilter.Length > 0 && valuesFilter.Length == fieldsFilter.Length)
+                if (valuesFilter.Length > 0 && fieldsFilter.Length > 0 && relations.Length > 0 && 
+                    valuesFilter.Length == fieldsFilter.Length && valuesFilter.Length == relations.Length)
                 {
                     for (int i = 0; i < fieldsFilter.Length; i++)
                     {
-                        sql += "`" + fieldsFilter[i] + "` = " + SQLTypeConverter.ParseTypeToString(valuesFilter[i].GetType(), valuesFilter[i]);
+                        sql += "`" + fieldsFilter[i] + "` " + relations[i] + SQLTypeConverter.ParseTypeToString(valuesFilter[i].GetType(), valuesFilter[i]);
                         if (i < fieldsFilter.Length - 1)
-                            sql += ", ";
+                            sql += " AND ";
                     }
                 }
 
@@ -246,5 +201,5 @@ namespace NETCoreAPIConectaBarrio.Helpers
 
             return res;
         }
-}
+    }
 }

@@ -27,10 +27,11 @@ namespace NETCoreAPIConectaBarrio.Services
 
         public bool DeleteTournament(int idTournament, int idUser)
         {
-            if (this._userSvc.GetUserRole(idUser) == EnumRoles.ADMIN)
-                return SQLConnectionHelper.DeleteBBDD(TABLE, ["IDTOURNAMENT"], [idTournament], [SQLRelationType.EQUAL]);
-            else
-                return SQLConnectionHelper.UpdateBBDD(TABLE, ["ACTIVE"], [false], ["IDTOURNAMENT"], [idTournament]);
+            //if (this._userSvc.GetUserRole(idUser) == EnumRoles.ADMIN)
+            //    return SQLConnectionHelper.DeleteBBDD(TABLE, ["IDTOURNAMENT"], [idTournament], [SQLRelationType.EQUAL]);
+            //else
+            //    return SQLConnectionHelper.UpdateBBDD(TABLE, ["ACTIVE"], [false], ["IDTOURNAMENT"], [idTournament]);
+            return true;
         }
 
         public List<TournamentModel> GetAllTournaments()
@@ -53,14 +54,14 @@ namespace NETCoreAPIConectaBarrio.Services
 
         public bool UpdatePlayerNumbers(TournamentModel tournament)
         {
-            return SQLConnectionHelper.UpdateBBDD(TABLE, ["CONFIRMED_PLAYERS"], [tournament.ConfirmedPlayers], ["IDTOURNAMENT"], [tournament.IdTournament]);
+            return true; //SQLConnectionHelper.UpdateBBDD(TABLE, ["CONFIRMED_PLAYERS"], [tournament.ConfirmedPlayers], ["IDTOURNAMENT"], [tournament.IdTournament]);
         }
 
         public bool UpdateTournament(TournamentModel tournament, int idUser)
         {
             string[] fields = ["IDTOURNAMENT_TYPE", "NAME", "MODIFICATION_USER", "MODIFICATION_DATE", "START_DATE", "END_DATE", "MIN_PLAYERS", "MAX_PLAYERS", "CONFIRMED_PLAYERS", "ACTIVE"];
             object[] values = [tournament.IdTournamentType, tournament.Name, idUser, DateTime.Now, tournament.StartDate, tournament.EndDate, tournament.MinPlayers, tournament.MaxPlayers, tournament.ConfirmedPlayers, tournament.Active];
-            return SQLConnectionHelper.UpdateBBDD(TABLE, fields, values, ["IDTOURNAMENT"], [tournament.IdTournament]);
+            return true; // SQLConnectionHelper.UpdateBBDD(TABLE, fields, values, ["IDTOURNAMENT"], [tournament.IdTournament]);
         }
     }
 }
