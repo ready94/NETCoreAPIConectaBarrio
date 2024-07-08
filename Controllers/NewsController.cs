@@ -15,9 +15,11 @@ namespace NETCoreAPIConectaBarrio.Controllers
             _newsSvc = newsSvc;
         }
 
+
         [HttpPost("createNew/{idUser}")]
         public ActionResult<bool> CreateNew([FromBody] NewsModel news, int idUser)
         {
+            
             return Ok(_newsSvc.CreateNew(news, idUser));
         }
 

@@ -19,7 +19,7 @@ namespace NETCoreAPIConectaBarrio.Services
         public bool CreateNew(NewsModel news, int idUser)
         {
             string[] fields = ["IDCATEGORY", "NAME", "DESCRIPTION", "CREATION_USER", "CREATION_DATE", "START_DATE", "END_DATE", "ACTIVE"];
-            object[] values = [news.IdCategory, news.Name, news.Description, idUser, DateTime.Now, news.StartDate, news.EndDate, news.Active];
+            object[] values = [(int)news.IdCategory, news.Name, news.Description, idUser, DateTime.Now, news.StartDate, news.EndDate, true];
             return SQLConnectionHelper.InsertBBDD(TABLE, fields, values);
         }
 

@@ -17,9 +17,9 @@ namespace NETCoreAPIConectaBarrio.Controllers
         }
 
         [HttpPost("login")]
-        public ActionResult<ResponseResult<string>> Login([FromBody] LoginModel login)
+        public ActionResult<ResponseResult<LoginDTO>> Login([FromBody] LoginModel login)
         {
-            ResponseResult<string> res = new ResponseResult<string>(false, null, "ERROR.ERROR");
+            ResponseResult<LoginDTO> res = new ResponseResult<LoginDTO>(false, null, "ERROR.ERROR");
             try
             {
                 //ResponseResult<string> res = new ResponseResult<string>(false, null, "LOGING.ERROR.NOT_AUTHENTICATED");

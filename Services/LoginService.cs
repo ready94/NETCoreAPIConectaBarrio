@@ -30,10 +30,10 @@ namespace NETCoreAPIConectaBarrio.Services
             return res;
         }
 
-        public ResponseResult<string> Login(LoginModel login)
+        public ResponseResult<LoginDTO> Login(LoginModel login)
         {
 
-            ResponseResult<string> res = new ResponseResult<string>(false, "", "ERROR.ERROR");
+            ResponseResult<LoginDTO> res = new ResponseResult<LoginDTO>(false, null, "ERROR.ERROR");
             List<string> fields = ["PASSWORD"];
             List<object> values = [login.Password];
             List<string> relations = [SQLRelationType.EQUAL];
@@ -55,9 +55,14 @@ namespace NETCoreAPIConectaBarrio.Services
             DataRow? row = SQLConnectionHelper.GetResult("SYS_T_USERS", [..fields], [..values], [..relations]);
             if(row != null)
             {
+                LoginDTO loginDto = new()
+                {
+                    IdUser = row.Field<int>("IDUSER"),
+                    UserName = row.Field<string>("USERNAME")
+                };
 
                 res.Success = true;
-                res.Result = row.Field<string>("USERNAME") ?? "";
+                res.Result = loginDto;
                 res.Msg = "";
 
                 SQLConnectionHelper.UpdateBBDD("SYS_T_USERS", ["IP"], [login.Ip], [.. fields], [.. values], [.. relations]);
