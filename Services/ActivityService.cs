@@ -3,12 +3,13 @@ using NETCoreAPIConectaBarrio.Models;
 using NETCoreAPIConectaBarrio.Services.Interfaces;
 using NETCoreAPIConectaBarrio.Enums;
 using System.Data;
+using System.Diagnostics;
 
 namespace NETCoreAPIConectaBarrio.Services
 {
     public class ActivityService : IActivityService
     {
-        private const string TABLE = "SYS_T_TOURNAMENTS";
+        private const string TABLE = "SYS_T_EVENTS";
         private IUserService _userSvc;
 
         public ActivityService(IUserService userSvc)
@@ -16,52 +17,87 @@ namespace NETCoreAPIConectaBarrio.Services
             _userSvc = userSvc;
         }
 
-        public bool CreateTournament(TournamentModel tournament)
+        public bool CreateActivity(ActivityModel activity)
         {
-            string[] fields = ["IDTOURNAMENT_TYPE", "NAME", "CREATION_USER", "CREATION_DATE",
-                                "START_DATE", "END_DATE", "MIN_PLAYERS", "MAX_PLAYERS", "ACTIVE"];
-            object[] values = [tournament.IdTournamentType, tournament.Name, tournament.CreationUser, DateTime.Now,
-                                tournament.StartDate, tournament.EndDate, tournament.MinPlayers, tournament.MaxPlayers, tournament.Active];
+            string[] fields = ["IDEVENT_TYPE", "IDEVENT_SUBCATEGORY", "LOCATION", "MAX_PERSON", "ACTUAL_PERSON", "CREATION_USER", "EVENT_DATE", "CREATION_DATE"];
+            object[] values = [activity.IdEventType, activity.IdEventSubcategory, activity.Location, activity.MaxPerson,
+                                activity.ActualPerson, activity.CreationUser, activity.EventDate, DateTime.Now];
             return SQLConnectionHelper.InsertBBDD(TABLE, fields, values);
         }
 
-        public bool DeleteTournament(int idTournament, int idUser)
+        public bool DeleteActivity(int idactivity, int idUser)
         {
-            //if (this._userSvc.GetUserRole(idUser) == EnumRoles.ADMIN)
-            //    return SQLConnectionHelper.DeleteBBDD(TABLE, ["IDTOURNAMENT"], [idTournament], [SQLRelationType.EQUAL]);
-            //else
-            //    return SQLConnectionHelper.UpdateBBDD(TABLE, ["ACTIVE"], [false], ["IDTOURNAMENT"], [idTournament]);
-            return true;
+            if (this._userSvc.GetUserRole(idUser) == EnumRoles.ADMIN)
+                return SQLConnectionHelper.DeleteBBDD(TABLE, ["IDEVENT"], [idactivity], [SQLRelationType.EQUAL]);
+            else
+                return false;
+            
         }
 
-        public List<TournamentModel> GetAllTournaments()
+        public ActivityModel GetEventByIdEvent(int idactivity)
         {
-            List<TournamentModel> res = [];
-            DataTable dt = SQLConnectionHelper.GetResultTable(TABLE);
+            DataRow? row = SQLConnectionHelper.GetResult(TABLE, ["IDEVENT"], [idactivity], [SQLRelationType.EQUAL]);
 
-            foreach (DataRow row in dt.Rows)
-                res.Add(new TournamentModel(row));
+            return new ActivityModel(row);
+        }
+
+        public bool UpdatePlayerNumbers(ActivityModel activity)
+        {
+
+            DataRow row = SQLConnectionHelper.GetResult(TABLE, ["IDEVENT"], [activity.IdEvent], [SQLRelationType.EQUAL]);
+            if(row != null)
+            {
+                int max = row.Field<int>("MAX_PERSON");
+                if (activity.ActualPerson > max)
+                    return false;
+            }
+
+            bool res = SQLConnectionHelper.UpdateBBDD(TABLE, ["ACTUAL_PERSON"], [activity.ActualPerson], ["IDEVENT"], [activity.IdEvent], [SQLRelationType.EQUAL]);
+
 
             return res;
         }
 
-        public TournamentModel? GetTournamentData(int idTournament)
+        public bool UpdateEvent(ActivityModel activity, int idUser)
         {
-            DataRow? row = SQLConnectionHelper.GetResult(TABLE, ["IDTOURNAMENT"], [idTournament], [SQLRelationType.EQUAL]);
+            string[] fields = ["IDEVENT_TYPE", "IDEVENT_SUBCATEGORY", "LOCATION", "MAX_PERSON", "ACTUAL_PERSON", "EVENT_DATE"];
+            object[] values = [activity.IdEventType, activity.IdEventSubcategory, activity.Location, activity.MaxPerson,
+                                activity.ActualPerson, activity.EventDate];
 
-            return new TournamentModel(row);
+            bool res = SQLConnectionHelper.UpdateBBDD(TABLE, fields, values, ["IDEVENT"], [activity.IdEvent], [SQLConnectionHelper.EQUAL]);
+
+            return res;
         }
 
-        public bool UpdatePlayerNumbers(TournamentModel tournament)
+        public List<ActivityModel> GetAllEventsFiltered(FilterModel filters)
         {
-            return true; //SQLConnectionHelper.UpdateBBDD(TABLE, ["CONFIRMED_PLAYERS"], [tournament.ConfirmedPlayers], ["IDTOURNAMENT"], [tournament.IdTournament]);
+            List<ActivityModel> res = [];
+
+            DataTable dt = SQLConnectionHelper.GetResultTable("VIEW_AVAILABLE_EVENTS", filters.fields, filters.values, filters.relations);
+            if (dt != null)
+            {
+                foreach (DataRow row in dt.Rows)
+                {
+                    res.Add(new ActivityModel(row));
+                }
+            }
+
+            return res;
         }
 
-        public bool UpdateTournament(TournamentModel tournament, int idUser)
+        public List<ActivityModel> GetAllAvailableEvents()
         {
-            string[] fields = ["IDTOURNAMENT_TYPE", "NAME", "MODIFICATION_USER", "MODIFICATION_DATE", "START_DATE", "END_DATE", "MIN_PLAYERS", "MAX_PLAYERS", "CONFIRMED_PLAYERS", "ACTIVE"];
-            object[] values = [tournament.IdTournamentType, tournament.Name, idUser, DateTime.Now, tournament.StartDate, tournament.EndDate, tournament.MinPlayers, tournament.MaxPlayers, tournament.ConfirmedPlayers, tournament.Active];
-            return true; // SQLConnectionHelper.UpdateBBDD(TABLE, fields, values, ["IDTOURNAMENT"], [tournament.IdTournament]);
+            List<ActivityModel> res = [];
+
+            DataTable dt = SQLConnectionHelper.GetResultTable("VIEW_AVAILABLE_EVENTS");
+            if(dt != null)
+            {
+                foreach(DataRow row in dt.Rows)
+                {
+                    res.Add(new ActivityModel(row));
+                }
+            }
+            return res;
         }
     }
 }

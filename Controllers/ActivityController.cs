@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using NETCoreAPIConectaBarrio.Models;
+using NETCoreAPIConectaBarrio.Services.Interfaces;
+using System.Data.Entity;
 
 namespace NETCoreAPIConectaBarrio.Controllers
 {
@@ -8,36 +9,123 @@ namespace NETCoreAPIConectaBarrio.Controllers
     [ApiController]
     public class ActivityController : ControllerBase
     {
-        // GET: api/<ActivityController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private IActivityService _activityService;
+        public ActivityController(IActivityService activitySvc)
         {
-            return new string[] { "value1", "value2" };
+            this._activityService = activitySvc;
         }
 
-        // GET api/<ActivityController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+
+        [HttpGet("")]
+        public ActionResult<List<ActivityModel>> GetAllAvailableEvents()
         {
-            return "value";
+            List<ActivityModel> result = [];
+            try
+            {
+                result = this._activityService.GetAllAvailableEvents();
+            }
+            catch(Exception exc)
+            {
+                throw new Exception($"Error en GetAllAvailableEvents() => " + exc.Message, exc);
+            }
+            return result;
         }
 
-        // POST api/<ActivityController>
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpPost("getFilteredEvents")]
+        public ActionResult<List<ActivityModel>> GetAllFilteredEvents([FromBody] FilterModel filters)
         {
+            List<ActivityModel> result = [];
+            try
+            {
+                result = this._activityService.GetAllEventsFiltered(filters);
+            }
+            catch (Exception exc)
+            {
+                throw new Exception($"Error en GetAllFilteredEvents() => " + exc.Message, exc);
+            }
+            return result;
         }
 
-        // PUT api/<ActivityController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpGet("getEventByIdEvent/{idEvent}")]
+        public ActionResult<ActivityModel> GetEventByIdEvent(int idEvent)
         {
+            ActivityModel result = null;
+            try
+            {
+                result = this._activityService.GetEventByIdEvent(idEvent);
+            }
+            catch (Exception exc)
+            {
+                throw new Exception($"Error en GetEventByIdEvent() => " + exc.Message, exc);
+            }
+            return result;
         }
 
-        // DELETE api/<ActivityController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpPost("createEvent")]
+        public ActionResult<bool> CreateEvent([FromBody] ActivityModel activity)
         {
+            bool result = false;
+            try
+            {
+                result = this._activityService.CreateActivity(activity);
+            }
+            catch (Exception exc)
+            {
+                throw new Exception($"Error en GetAllFilteredEvents() => " + exc.Message, exc);
+            }
+            return result;
         }
+
+        [HttpDelete("deleteEventByIdEvent/{idEvent}/{idUser}")]
+        public ActionResult<bool> DeleteEvent(int idEvent, int idUser)
+        {
+            bool result = false;
+            try
+            {
+                result = this._activityService.DeleteActivity(idEvent, idUser);
+            }
+            catch (Exception exc)
+            {
+                throw new Exception($"Error en GetAllFilteredEvents() => " + exc.Message, exc);
+            }
+            return result;
+        }
+
+        [HttpPut("updateNumberOfPlayers")]
+        public ActionResult<bool> UpdateNumberOfPlayers([FromBody] ActivityModel activity)
+        {
+            bool result = false;
+            try
+            {
+                result = this._activityService.UpdatePlayerNumbers(activity);
+            }
+            catch (Exception exc)
+            {
+                throw new Exception($"Error en GetAllFilteredEvents() => " + exc.Message, exc);
+            }
+            return result;
+        }
+
+        [HttpPut("updateEvent/{idUser}")]
+        public ActionResult<bool> UpdateEvent([FromBody] ActivityModel activity, int idUser)
+        {
+            bool result = false;
+            try
+            {
+                result = this._activityService.UpdateEvent(activity, idUser);
+            }
+            catch (Exception exc)
+            {
+                throw new Exception($"Error en GetAllFilteredEvents() => " + exc.Message, exc);
+            }
+            return result;
+        }
+
     }
 }
+
+
+/*
+      bool UpdatePlayerNumbers(ActivityModel activity);
+        bool UpdateEvent(ActivityModel activity, int idUser);
+ */

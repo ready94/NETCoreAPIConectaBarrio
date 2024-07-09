@@ -5,11 +5,12 @@ namespace NETCoreAPIConectaBarrio.Services.Interfaces
 {
     public interface IActivityService
     {
-        bool CreateTournament(TournamentModel tournament);
-        bool DeleteTournament(int idTournament, int idUser);
-        List<TournamentModel> GetAllTournaments();
-        TournamentModel? GetTournamentData(int idTournament);
-        bool UpdatePlayerNumbers(TournamentModel tournament);
-        bool UpdateTournament(TournamentModel tournament, int idUser);
+        bool CreateActivity(ActivityModel activity);
+        bool DeleteActivity(int idActivity, int idUser);
+        List<ActivityModel> GetAllEventsFiltered(FilterModel filters);
+        List<ActivityModel> GetAllAvailableEvents();
+        ActivityModel GetEventByIdEvent(int idEvent);
+        bool UpdatePlayerNumbers(ActivityModel activity);
+        bool UpdateEvent(ActivityModel activity, int idUser);
     }
 }
