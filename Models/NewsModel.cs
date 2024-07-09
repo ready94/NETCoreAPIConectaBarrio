@@ -16,6 +16,7 @@ namespace NETCoreAPIConectaBarrio.Models
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public bool Active { get; set; }
+        public string? url { get; set; }
 
         public NewsModel() { }
 
@@ -24,7 +25,7 @@ namespace NETCoreAPIConectaBarrio.Models
             IdNew = row.Field<int>("IDNEW");
             IdCategory = (EnumNewsCategory)row.Field<int>("IDCATEGORY");
             Name = row.Field<string?>("NAME");
-            Description = row.Field<string?>("DESCRITPION");
+            Description = row.Field<string?>("DESCRIPTION");
             CreationUser = row.Field<int>("CREATION_USER");
             CreationDate = row.Field<DateTime>("CREATION_DATE");
             ModificationUser = row.Field<int?>("MODIFICATION_USER");
