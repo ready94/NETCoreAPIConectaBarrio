@@ -4,6 +4,7 @@ using NETCoreAPIConectaBarrio.Services.Interfaces;
 using NETCoreAPIConectaBarrio.Enums;
 using System.Data;
 using System.Diagnostics;
+using NETCoreAPIConectaBarrio.DTOs;
 
 namespace NETCoreAPIConectaBarrio.Services
 {
@@ -22,7 +23,12 @@ namespace NETCoreAPIConectaBarrio.Services
             string[] fields = ["IDEVENT_TYPE", "IDEVENT_SUBCATEGORY", "LOCATION", "MAX_PERSON", "ACTUAL_PERSON", "CREATION_USER", "EVENT_DATE", "CREATION_DATE"];
             object[] values = [activity.IdEventType, activity.IdEventSubcategory, activity.Location, activity.MaxPerson,
                                 activity.ActualPerson, activity.CreationUser, activity.EventDate, DateTime.Now];
-            return SQLConnectionHelper.InsertBBDD(TABLE, fields, values);
+
+            int res = SQLConnectionHelper.InsertIdentityBBDD(TABLE, fields, values);
+
+            SQLConnectionHelper.InsertBBDD("sys_rel_user_event", ["IDUSER", "IDEVENT"], [activity.CreationUser, res]);
+
+            return true;
         }
 
         public bool DeleteActivity(int idactivity, int idUser)
@@ -99,5 +105,15 @@ namespace NETCoreAPIConectaBarrio.Services
             }
             return res;
         }
+
+        //public List<EventCategoryDTO> GetEventCategoryList()
+        //{
+        //    List<EventCategoryDTO> res = [];
+        //    try
+        //    {
+        //        DataTable dt = SQLConnectionHelper.GetResultTable("")
+        //    }
+        //}
+
     }
 }

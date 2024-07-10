@@ -129,6 +129,48 @@ namespace NETCoreAPIConectaBarrio.Helpers
             return res;
         }
 
+        public static int InsertIdentityBBDD(string table, string[] fields, object[] values)
+        {
+            MySqlConnection? conn = ConnectBBDD();
+            int res = 0;
+
+            conn?.Open();
+
+            if (conn?.State == ConnectionState.Open)
+            {
+                string sql = "INSERT INTO `" + table + "` (";
+                for (int i = 0; i < fields.Length; i++)
+                {
+                    sql += "`" + fields[i] + "`";
+                    if (i < fields.Length - 1) sql += ", ";
+                    else sql += ") ";
+                }
+
+                sql += "VALUES (";
+                for (int i = 0; i < values.Length; i++)
+                {
+                    sql += SQLTypeConverter.ParseTypeToString(values[i].GetType(), values[i]);
+
+                    if (i < values.Length - 1) sql += ", ";
+                    else sql += "); ";
+                }
+
+                MySqlCommand cmd = new MySqlCommand(sql, conn);
+                int insert = cmd.ExecuteNonQuery();
+                
+                if (insert > 0) {
+                    sql = "SELECT @@IDENTITY";
+                    MySqlCommand cmdIdent = new MySqlCommand(sql, conn);
+                    res = cmdIdent.ExecuteNonQuery();
+                        
+                }
+
+                conn?.Close();
+            }
+            return res;
+        }
+
+
         public static bool DeleteBBDD(string table, string[] fields, object[] values, string[] relations)
         {
 

@@ -35,8 +35,8 @@ namespace NETCoreAPIConectaBarrio.Controllers
             return res;
         }
 
-        [HttpPost("forgotPassword")]
-        public ActionResult<bool> ForgotPassword([FromBody] ForgotPassword forgotPassword)
+        [HttpPost("changePassword")]
+        public ActionResult<ResponseResult<bool>> ForgotPassword([FromBody] ForgotPassword forgotPassword)
         {
             return Ok(this._loginSvc.ForgotPassword(forgotPassword));
         }

@@ -23,7 +23,7 @@ namespace NETCoreAPIConectaBarrio.Controllers
         public async Task<IActionResult> GetAllNews()
         {
             var query = "Barrio del Pilar Madrid";
-            var fromDate = DateTime.Now.AddDays(-2).ToString("dd-MM-yyyy");
+            var fromDate = DateTime.Now.AddDays(-1).ToString("dd-MM-yyyy");
             var apiKey = "f32ef93528414f4082a753abd51e79bc";
             var url = $"https://newsapi.org/v2/everything?q={query}&from={fromDate}&sortBy=publishedAt&apiKey={apiKey}";
             var request = new HttpRequestMessage(HttpMethod.Get, url) ;

@@ -17,15 +17,19 @@ namespace NETCoreAPIConectaBarrio.Services
             _userService = userService;
         }
 
-        public bool ForgotPassword(ForgotPassword forgotPassword)
+        public ResponseResult<bool> ForgotPassword(ForgotPassword forgotPassword)
         {
-            bool res = false;
+            ResponseResult<bool> res = new ResponseResult<bool>(false, false, "");
             if (forgotPassword != null)
             {
-                if (forgotPassword.NewPassword.Equals(forgotPassword.NewPasswordCheck))
+                res.Result = SQLConnectionHelper.UpdateBBDD("SYS_T_USERS", ["PASSWORD"], [forgotPassword.NewPassword], ["EMAIL", "USERNAME"],
+                    [forgotPassword.email, forgotPassword.Username], [SQLConnectionHelper.EQUAL, SQLConnectionHelper.EQUAL]);
+                if (res.Result)
                 {
-                    res = SQLConnectionHelper.UpdateBBDD("SYS_T_USERS", ["PASSWORD"], [forgotPassword.NewPassword], ["EMAIL"], [forgotPassword.email], [SQLConnectionHelper.EQUAL]);
+                    res.Success = true;
+                    res.Msg = "LOGIN.FORGOT_PASSWORD.CHANGE_PASSWORD_SUCCESS";
                 }
+
             }
             return res;
         }
@@ -38,8 +42,9 @@ namespace NETCoreAPIConectaBarrio.Services
             List<object> values = [login.Password];
             List<string> relations = [SQLRelationType.EQUAL];
 
-            if(login.UserName != "")
-                { fields.Add("USERNAME");
+            if (login.UserName != "")
+            {
+                fields.Add("USERNAME");
                 values.Add(login.UserName);
                 relations.Add(SQLRelationType.EQUAL);
             }
@@ -52,8 +57,8 @@ namespace NETCoreAPIConectaBarrio.Services
             }
 
 
-            DataRow? row = SQLConnectionHelper.GetResult("SYS_T_USERS", [..fields], [..values], [..relations]);
-            if(row != null)
+            DataRow? row = SQLConnectionHelper.GetResult("SYS_T_USERS", [.. fields], [.. values], [.. relations]);
+            if (row != null)
             {
                 LoginDTO loginDto = new()
                 {
@@ -77,7 +82,7 @@ namespace NETCoreAPIConectaBarrio.Services
             try
             {
                 UserDTO user = this._userService.GetUserInfo(login);
-                if(user == null)
+                if (user == null)
                 {
                     response.Msg = "LOGIN.ERROR.NOT_ACTIVE_OR_BLOCKED";
                 }
@@ -86,7 +91,8 @@ namespace NETCoreAPIConectaBarrio.Services
                 }
 
 
-            }catch(Exception exc)
+            }
+            catch (Exception exc)
             {
                 throw new Exception($"Error en AuthenticateUser() => " + exc.Message, exc);
             }

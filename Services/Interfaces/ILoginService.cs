@@ -6,7 +6,7 @@ namespace NETCoreAPIConectaBarrio.Services.Interfaces
     public interface ILoginService
     {
         ResponseResult<LoginDTO> Login(LoginModel login);
-        bool ForgotPassword(ForgotPassword forgotPassword);
+        ResponseResult<bool> ForgotPassword(ForgotPassword forgotPassword);
         ResponseResult<LoginResponse> AuthenticateUser(LoginModel login);
     }
 }
