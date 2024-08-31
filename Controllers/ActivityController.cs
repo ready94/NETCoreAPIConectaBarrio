@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NETCoreAPIConectaBarrio.DTOs;
 using NETCoreAPIConectaBarrio.Models;
 using NETCoreAPIConectaBarrio.Services.Interfaces;
 using System.Data.Entity;
@@ -24,7 +25,7 @@ namespace NETCoreAPIConectaBarrio.Controllers
             {
                 result = this._activityService.GetAllAvailableEvents();
             }
-            catch(Exception exc)
+            catch (Exception exc)
             {
                 throw new Exception($"Error en GetAllAvailableEvents() => " + exc.Message, exc);
             }
@@ -91,13 +92,28 @@ namespace NETCoreAPIConectaBarrio.Controllers
             return result;
         }
 
-        [HttpPut("updateNumberOfPlayers")]
-        public ActionResult<bool> UpdateNumberOfPlayers([FromBody] ActivityModel activity)
+        [HttpPut("updateNumberOfPlayers/{idUser}")]
+        public ActionResult<bool> UpdateNumberOfPlayers([FromBody] ActivityModel activity, int idUser)
         {
             bool result = false;
             try
             {
-                result = this._activityService.UpdatePlayerNumbers(activity);
+                result = this._activityService.UpdatePlayerNumbers(activity, idUser);
+            }
+            catch (Exception exc)
+            {
+                throw new Exception($"Error en GetAllFilteredEvents() => " + exc.Message, exc);
+            }
+            return result;
+        }
+
+        [HttpPut("removeNumberOfPlayers/{idUser}")]
+        public ActionResult<bool> RemoveNumberOfPlayers([FromBody] ActivityModel activity, int idUser)
+        {
+            bool result = false;
+            try
+            {
+                result = this._activityService.RemovePlayerNumbers(activity, idUser);
             }
             catch (Exception exc)
             {
@@ -119,6 +135,58 @@ namespace NETCoreAPIConectaBarrio.Controllers
                 throw new Exception($"Error en GetAllFilteredEvents() => " + exc.Message, exc);
             }
             return result;
+        }
+
+        [HttpGet("getEventTypes")]
+        public ActionResult<List<EventTypeDTO>> GetEventTournamentTypes()
+        {
+            List<EventTypeDTO> res = [];
+
+            try
+            {
+                res = this._activityService.GetEventTournamentTypes();
+            }
+            catch(Exception Exc) { }
+            return res;
+        }
+
+        [HttpGet("getEventCategories")]
+        public ActionResult<List<EventCategoryDTO>> GetEventCategories()
+        {
+            List<EventCategoryDTO> res = [];
+
+            try
+            {
+                res = this._activityService.GetEventCategories();
+            }
+            catch (Exception Exc) { }
+            return res;
+        }
+
+        [HttpGet("getEventSubcategories")]
+        public ActionResult<List<EventSubCategoryDTO>> GetEventSubCategories()
+        {
+            List<EventSubCategoryDTO> res = [];
+
+            try
+            {
+                res = this._activityService.GetEventSubCategories();
+            }
+            catch (Exception Exc) { }
+            return res;
+        }
+
+        [HttpGet("getAllEventsByUser/{idUser}")]
+        public ActionResult<List<int>> GetAllEventsByUser(int idUser)
+        {
+            List<int> res = [];
+
+            try
+            {
+                res = this._activityService.GetAllEventsByUser(idUser);
+            }
+            catch (Exception Exc) { }
+            return res;
         }
 
     }

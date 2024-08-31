@@ -5,7 +5,7 @@ namespace NETCoreAPIConectaBarrio.Services.Interfaces
 {
     public interface IComplaintService
     {
-        bool CreateComplaint(ComplaintModel complaint);
+        bool CreateComplaint(ComplaintDTO complaint, int idUser);
         bool DeleteComplaint(int idUser, int idComplaint);
         List<ComplaintModel> GetAllComplaints();
         ComplaintModel? GetComplaint(int idComplaint);

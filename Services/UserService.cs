@@ -3,7 +3,6 @@ using NETCoreAPIConectaBarrio.Enums;
 using NETCoreAPIConectaBarrio.Helpers;
 using NETCoreAPIConectaBarrio.Models;
 using NETCoreAPIConectaBarrio.Services.Interfaces;
-using NETCoreAPIConectaBarrio.Enums;
 using System.Data;
 
 namespace NETCoreAPIConectaBarrio.Services
@@ -11,9 +10,9 @@ namespace NETCoreAPIConectaBarrio.Services
     public class UserService : IUserService
     {
         private const string TABLE = "SYS_T_USERS";
-        public bool BlockUser(int idUser)
+        public bool BlockUser(int idAdmin, int idUser)
         {
-            return SQLConnectionHelper.UpdateBBDD(TABLE, ["IS_BLOCKED"], [true], ["IDUSER"], [idUser], [SQLRelationType.EQUAL]);
+            return SQLConnectionHelper.UpdateBBDD(TABLE, ["IS_BLOCKED", "MODIFICATION_DATE", "MODIFICATION_USER"], [true, DateTime.Now, idAdmin], ["IDUSER"], [idUser], [SQLRelationType.EQUAL]);
         }
 
         public ResponseResult<bool> CreateUser(NewUserModel user)
@@ -24,12 +23,13 @@ namespace NETCoreAPIConectaBarrio.Services
                 try
                 {
                     string[] fields = ["IDROLE", "NAME", "SURNAME", "USERNAME", "PASSWORD", "EMAIL", "CREATION_DATE"];
-                    object[] values = [(int)EnumRoles.USER, user.Name, user.Surname, user.Username, user.Password, user.Email, DateTime.Now];
+                    object[] values = [(int)user.IdRole, user.Name, user.Surname, user.Username, user.Password, user.Email, DateTime.Now];
 
                     //1 - Check username
 
                     DataRow? exist = SQLConnectionHelper.GetResult("VIEW_USERS", ["USERNAME"], [user.Username], [SQLRelationType.EQUAL]);
-                    if(exist != null) {
+                    if (exist != null)
+                    {
                         res.Result = false;
                         res.Msg = "USER.ALREADY_EXISTS_USERNAME";
                         res.Success = false;
@@ -48,7 +48,8 @@ namespace NETCoreAPIConectaBarrio.Services
 
                     //3 - Insert
                     bool insert = SQLConnectionHelper.InsertBBDD(TABLE, fields, values);
-                    if (insert) {
+                    if (insert)
+                    {
                         res.Result = true;
                         res.Msg = "USER.CREATED_SUCCESS";
                         res.Success = true;
@@ -62,7 +63,8 @@ namespace NETCoreAPIConectaBarrio.Services
                         return res;
                     }
 
-                }catch(Exception exc)
+                }
+                catch (Exception exc)
                 {
                     throw new Exception($"Error en CreateUser() => " + exc.Message, exc);
                 }
@@ -72,7 +74,7 @@ namespace NETCoreAPIConectaBarrio.Services
 
         public List<UserModel> GetAllUsers()
         {
-            List<UserModel> users = new();
+            List<UserModel> users = [];
             DataTable dt = SQLConnectionHelper.GetResultTable(TABLE);
             foreach (DataRow row in dt.Rows)
             {
@@ -84,23 +86,23 @@ namespace NETCoreAPIConectaBarrio.Services
         public UserModel? GetUserData(int idUser)
         {
             DataRow? row = SQLConnectionHelper.GetResult(TABLE, ["IDUSER"], [idUser], [SQLRelationType.EQUAL]);
-
-            return new UserModel(row);
+            UserModel? user = (row != null) ? new UserModel(row) : null;
+            return user;
         }
 
-        public bool UnblockUser(int idUser)
+        public bool UnblockUser(int idAdmin, int idUser)
         {
-            return SQLConnectionHelper.UpdateBBDD(TABLE, ["IS_BLOCKED"], [false], ["IDUSER"], [idUser], [SQLRelationType.EQUAL]); ;
+            return SQLConnectionHelper.UpdateBBDD(TABLE, ["IS_BLOCKED", "MODIFICATION_DATE", "MODIFICATION_USER"], [0, DateTime.Now, idAdmin], ["IDUSER"], [idUser], [SQLRelationType.EQUAL]); 
         }
 
-        public bool UpdateUser(UserModel user)
+        public bool UpdateUser(UserModel user, int idUserUpdate)
         {
             bool res = false;
 
             if (user != null)
             {
                 string[] fields = ["IDROLE", "NAME", "SURNAME", "USERNAME", "PASSWORD", "EMAIL", "MODIFICATION_USER", "MODIFICATION_DATE", "ACTIVE", "IS_BLOCKED"];
-                object[] values = [user.IdRole, user.Name, user.Surname, user.Username, user.Password, user.Email, user.ModificationUser, DateTime.Now, user.Active, user.IsBlocked];
+                object[] values = [user.IdRole, user.Name, user.Surname, user.Username, user.Password, user.Email, idUserUpdate, DateTime.Now, user.Active, user.IsBlocked];
                 string[] fieldsFilter = ["IDUSER"];
                 object[] valuesFilter = [user.IdUser];
                 res = SQLConnectionHelper.UpdateBBDD(TABLE, fields, values, fieldsFilter, valuesFilter, [SQLRelationType.EQUAL]);
@@ -114,15 +116,16 @@ namespace NETCoreAPIConectaBarrio.Services
             object[] valuesFilter = [idUser];
 
             DataRow? row = SQLConnectionHelper.GetResult(TABLE, fieldsFilter, valuesFilter, [SQLRelationType.EQUAL]);
-
-            return (EnumRoles)(row?.Field<EnumRoles>("IDROLE"));
+            EnumRoles? idRole = row?.Field<EnumRoles>("IDROLE") ?? null;
+            return idRole;
 
         }
 
         public UserDTO? GetUserInfo(LoginModel login)
         {
             UserDTO user = null;
-            try{
+            try
+            {
                 List<string> fields = [];
                 List<object> values = [];
                 List<string> relations = [];
@@ -140,7 +143,7 @@ namespace NETCoreAPIConectaBarrio.Services
                     relations.Add(SQLRelationType.EQUAL);
                 }
 
-                DataRow? row = SQLConnectionHelper.GetResult("VIEW_USERS", [..fields], [..values], [..relations]);
+                DataRow? row = SQLConnectionHelper.GetResult("VIEW_USERS", [.. fields], [.. values], [.. relations]);
                 if (row != null)
                 {
                     user = new UserDTO
@@ -156,7 +159,7 @@ namespace NETCoreAPIConectaBarrio.Services
                     };
                 }
             }
-            catch(Exception exc)
+            catch (Exception exc)
             {
                 throw new Exception($"Error en GetUserInfo() => " + exc.Message, exc);
             }

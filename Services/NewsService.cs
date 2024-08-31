@@ -19,7 +19,7 @@ namespace NETCoreAPIConectaBarrio.Services
         public bool CreateNew(NewsModel news, int idUser)
         {
             string[] fields = ["IDCATEGORY", "NAME", "DESCRIPTION", "CREATION_USER", "CREATION_DATE", "START_DATE", "END_DATE", "ACTIVE"];
-            object[] values = [(int)news.IdCategory, news.Name, news.Description, idUser, DateTime.Now, news.StartDate, news.EndDate, true];
+            object[] values = [(int)news.IdCategory, news.Name, news.Description, idUser, DateTime.Now, news.StartDate, news.EndDate, 1];
             return SQLConnectionHelper.InsertBBDD(TABLE, fields, values);
         }
 
@@ -28,7 +28,7 @@ namespace NETCoreAPIConectaBarrio.Services
             if (this._userService.GetUserRole(idUser) == EnumRoles.ADMIN)
                 return SQLConnectionHelper.DeleteBBDD(TABLE, ["IDNEW"], [idNew], [SQLRelationType.EQUAL]);
             else
-                return SQLConnectionHelper.UpdateBBDD(TABLE, ["ACTIVE"], [false], ["IDNEW"], [idNew], [SQLRelationType.EQUAL]);
+                return SQLConnectionHelper.UpdateBBDD(TABLE, ["ACTIVE"], [0], ["IDNEW"], [idNew], [SQLRelationType.EQUAL]);
         }
 
         public List<NewsModel> GetAllNews()

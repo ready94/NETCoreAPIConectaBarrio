@@ -15,7 +15,7 @@ namespace NETCoreAPIConectaBarrio.Models
         public DateTime CreationDate { get; set; }
         public int? ModificationUser { get; set; }
         public DateTime? ModificationDate { get; set; }
-        public bool Active { get; set; }
+        public int Active { get; set; }
 
         public ComplaintModel() { }
 
@@ -30,7 +30,7 @@ namespace NETCoreAPIConectaBarrio.Models
             CreationDate = row.Field<DateTime>("CREATION_DATE");
             ModificationUser = row.Field<int?>("MODIFICATION_USER");
             ModificationDate = row.Field<DateTime?>("MODIFICATION_DATE");
-            Active = row.Field<bool>("ACTIVE");
+            Active = row.Field<int>("ACTIVE");
         }
     }
 }

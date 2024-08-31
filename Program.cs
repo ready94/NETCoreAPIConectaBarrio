@@ -39,6 +39,8 @@ builder.Services.AddTransient<ILoginService, LoginService>();
 builder.Services.AddTransient<INewsService, NewsService>();
 builder.Services.AddTransient<IActivityService, ActivityService>();
 builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<ISharedService, SharedService>();
+builder.Services.AddTransient<IAdminService, AdminService>();
 
 var app = builder.Build();
 

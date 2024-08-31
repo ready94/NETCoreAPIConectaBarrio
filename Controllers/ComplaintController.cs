@@ -16,10 +16,10 @@ namespace NETCoreAPIConectaBarrio.Controllers
             _complaintSvc = complaintSvc;
         }
 
-        [HttpPost("createComplaint")]
-        public ActionResult<bool> CreateComplaint([FromBody] ComplaintModel complaint)
+        [HttpPost("createComplaint/{idUser}")]
+        public ActionResult<bool> CreateComplaint([FromBody] ComplaintDTO complaint, int idUser)
         {
-            return Ok(_complaintSvc.CreateComplaint(complaint));
+            return Ok(_complaintSvc.CreateComplaint(complaint, idUser));
         }
 
         [HttpPost("updateComplaint/{idUser}")]
@@ -44,6 +44,7 @@ namespace NETCoreAPIConectaBarrio.Controllers
         public ActionResult<List<ComplaintModel>> GetAllComplaints()
         {
             return Ok(_complaintSvc.GetAllComplaints());
-        }
+        }       
+
     }
 }

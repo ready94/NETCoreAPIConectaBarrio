@@ -17,8 +17,8 @@ namespace NETCoreAPIConectaBarrio.Models
         public DateTime CreationDate { get; set; }
         public int? ModificationUser { get; set; }
         public DateTime? ModificationDate { get; set;}
-        public bool Active { get; set; }
-        public bool IsBlocked { get; set; }
+        public int Active { get; set; }
+        public int IsBlocked { get; set; }
 
 
         public UserModel() { }
@@ -36,8 +36,8 @@ namespace NETCoreAPIConectaBarrio.Models
             CreationDate = row.Field<DateTime>("CREATION_DATE");
             ModificationUser = row.Field<int?>("MODIFICATION_USER");
             ModificationDate = row.Field<DateTime?>("MODIFICATION_DATE");
-            Active = row.Field<bool>("ACTIVE");
-            IsBlocked = row.Field<bool>("IS_BLOCKED");
+            Active = row.Field<int>("ACTIVE");
+            IsBlocked = row.Field<int>("IS_BLOCKED");
         }
     }
 }

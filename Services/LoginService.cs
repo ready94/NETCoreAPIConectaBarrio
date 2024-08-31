@@ -63,7 +63,8 @@ namespace NETCoreAPIConectaBarrio.Services
                 LoginDTO loginDto = new()
                 {
                     IdUser = row.Field<int>("IDUSER"),
-                    UserName = row.Field<string>("USERNAME")
+                    UserName = row.Field<string>("USERNAME"),
+                    IdRole = row.Field<EnumRoles>("IDROLE")
                 };
 
                 res.Success = true;

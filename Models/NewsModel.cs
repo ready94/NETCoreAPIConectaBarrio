@@ -15,7 +15,7 @@ namespace NETCoreAPIConectaBarrio.Models
         public DateTime? ModificationDate { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public bool Active { get; set; }
+        public int Active { get; set; }
         public string? url { get; set; }
 
         public NewsModel() { }
@@ -32,7 +32,7 @@ namespace NETCoreAPIConectaBarrio.Models
             ModificationDate = row.Field<DateTime?>("MODIFICATION_DATE");
             StartDate = row.Field<DateTime>("START_DATE");
             EndDate = row.Field<DateTime>("END_DATE");
-            Active = row.Field<bool>("ACTIVE");
+            Active = row.Field<int>("ACTIVE");
         }
     }
 }

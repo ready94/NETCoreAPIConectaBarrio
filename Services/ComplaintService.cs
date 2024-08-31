@@ -3,13 +3,14 @@ using NETCoreAPIConectaBarrio.Models;
 using NETCoreAPIConectaBarrio.Services.Interfaces;
 using NETCoreAPIConectaBarrio.Enums;
 using System.Data;
+using NETCoreAPIConectaBarrio.DTOs;
 
 namespace NETCoreAPIConectaBarrio.Services
 {
     public class ComplaintService : IComplaintService
     {
         private const string TABLE = "SYS_T_COMPLAINTS";
-    
+
         private IUserService _userSvc;
 
         public ComplaintService(IUserService userSvc)
@@ -17,14 +18,14 @@ namespace NETCoreAPIConectaBarrio.Services
             _userSvc = userSvc;
         }
 
-        public bool CreateComplaint(ComplaintModel complaint)
+        public bool CreateComplaint(ComplaintDTO complaint, int idUser)
         {
             bool res = false;
 
             if (complaint != null)
             {
                 string[] fields = ["IDCOMPLAINT_TYPE", "IDPRIORITY", "COMPLAINT_TITLE", "COMPLAINT_DESCRIPTION", "CREATION_USER", "CREATION_DATE", "ACTIVE"];
-                object[] values = [complaint.IdComplaintType, complaint.IdPriority, complaint.Title, complaint.Description, complaint.CreationUser, complaint.CreationDate, true];
+                object[] values = [(int)complaint.IdComplaintType, (int)complaint.IdPriority, complaint.Title, complaint.Description, idUser, DateTime.Now, 1];
                 res = SQLConnectionHelper.InsertBBDD(TABLE, fields, values);
             }
 
@@ -34,11 +35,10 @@ namespace NETCoreAPIConectaBarrio.Services
         public bool DeleteComplaint(int idUser, int idComplaint)
         {
             // Si el usuario es admin, se hace un borrado fisico, si no, un borrado logico
-            //if (this._userSvc.GetUserRole(idUser) == EnumRoles.ADMIN)
-            //    return SQLConnectionHelper.DeleteBBDD(TABLE, ["IDCOMPLAINT_TYPE"], [idComplaint], [SQLRelationType.EQUAL]);
-            //else
-            //    return SQLConnectionHelper.UpdateBBDD(TABLE, ["ACTIVE"], [false], ["IDCOMPLAINT_TYPE"], [idComplaint]);
-            return true;
+            if (this._userSvc.GetUserRole(idUser) == EnumRoles.ADMIN)
+                return SQLConnectionHelper.DeleteBBDD(TABLE, ["IDCOMPLAINT_TYPE"], [idComplaint], [SQLRelationType.EQUAL]);
+            else
+                return SQLConnectionHelper.UpdateBBDD(TABLE, ["ACTIVE"], [0], ["IDCOMPLAINT_TYPE"], [idComplaint], [SQLRelationType.EQUAL]);
         }
 
         public List<ComplaintModel> GetAllComplaints()

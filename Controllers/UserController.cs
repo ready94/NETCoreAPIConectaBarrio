@@ -22,22 +22,10 @@ namespace NETCoreAPIConectaBarrio.Controllers
             return Ok(_userSvc.CreateUser(user));
         }
 
-        [HttpPost("updateUser")]
-        public ActionResult<bool> UpdateUser([FromBody] UserModel user)
+        [HttpPost("updateUser/{idUpdateUser}")]
+        public ActionResult<bool> UpdateUser([FromBody] UserModel user, int idUpdateUser)
         {
-            return Ok(_userSvc.UpdateUser(user));
-        }
-
-        [HttpGet("blockUser")]
-        public ActionResult<bool> BlockUser(int idUser)
-        {
-            return Ok(_userSvc.BlockUser(idUser));
-        }
-
-        [HttpGet("unblockUser")]
-        public ActionResult<bool> UnblockUser(int idUser)
-        {
-            return Ok(_userSvc.UnblockUser(idUser));
+            return Ok(_userSvc.UpdateUser(user, idUpdateUser));
         }
 
         [HttpGet("getUserData/{idUser}")]
