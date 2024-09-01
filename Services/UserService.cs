@@ -15,15 +15,18 @@ namespace NETCoreAPIConectaBarrio.Services
             return SQLConnectionHelper.UpdateBBDD(TABLE, ["IS_BLOCKED", "MODIFICATION_DATE", "MODIFICATION_USER"], [true, DateTime.Now, idAdmin], ["IDUSER"], [idUser], [SQLRelationType.EQUAL]);
         }
 
-        public ResponseResult<bool> CreateUser(NewUserModel user)
+        public ResponseResult<bool> CreateUser(NewUserModel user, int idAdmin)
         {
             ResponseResult<bool> res = new(false, false, "");
             if (user != null)
             {
                 try
                 {
-                    string[] fields = ["IDROLE", "NAME", "SURNAME", "USERNAME", "PASSWORD", "EMAIL", "CREATION_DATE"];
-                    object[] values = [(int)user.IdRole, user.Name, user.Surname, user.Username, user.Password, user.Email, DateTime.Now];
+                    if (user.IdRole == null) 
+                        user.IdRole = EnumRoles.USER;
+
+                    string[] fields = ["IDROLE", "NAME", "SURNAME", "USERNAME", "PASSWORD", "EMAIL", "CREATION_DATE", "CREATION_USER"];
+                    object[] values = [(int)user.IdRole, user.Name, user.Surname, user.Username, user.Password, user.Email, DateTime.Now, idAdmin];
 
                     //1 - Check username
 
@@ -92,7 +95,7 @@ namespace NETCoreAPIConectaBarrio.Services
 
         public bool UnblockUser(int idAdmin, int idUser)
         {
-            return SQLConnectionHelper.UpdateBBDD(TABLE, ["IS_BLOCKED", "MODIFICATION_DATE", "MODIFICATION_USER"], [0, DateTime.Now, idAdmin], ["IDUSER"], [idUser], [SQLRelationType.EQUAL]); 
+            return SQLConnectionHelper.UpdateBBDD(TABLE, ["IS_BLOCKED", "MODIFICATION_DATE", "MODIFICATION_USER"], [0, DateTime.Now, idAdmin], ["IDUSER"], [idUser], [SQLRelationType.EQUAL]);
         }
 
         public bool UpdateUser(UserModel user, int idUserUpdate)
@@ -167,5 +170,17 @@ namespace NETCoreAPIConectaBarrio.Services
             return user;
 
         }
+
+        public List<UserRolesDTO> GetAllUserRoles()
+        {
+            List<UserRolesDTO> roles = [];
+            DataTable dt = SQLConnectionHelper.GetResultTable("SYS_M_ROLE");
+            foreach (DataRow row in dt.Rows)
+            {
+                roles.Add(new UserRolesDTO(row));
+            }
+            return roles;
+        }
+
     }
 }

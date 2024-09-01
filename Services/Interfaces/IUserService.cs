@@ -7,12 +7,14 @@ namespace NETCoreAPIConectaBarrio.Services.Interfaces
     public interface IUserService
     {
         bool BlockUser(int idAdmin, int idUser);
-        ResponseResult<bool> CreateUser(NewUserModel user);
+        ResponseResult<bool> CreateUser(NewUserModel user, int idAdmin = 0);
         List<UserModel> GetAllUsers();
         UserModel? GetUserData(int idUser);
         bool UnblockUser(int idAdmin, int idUser);
         bool UpdateUser(UserModel user, int idUserUpdate);
         EnumRoles? GetUserRole(int idUser);
         UserDTO GetUserInfo(LoginModel login);
+        List<UserRolesDTO> GetAllUserRoles();
+
     }
 }

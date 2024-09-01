@@ -32,10 +32,10 @@ namespace NETCoreAPIConectaBarrio.Controllers
 
         #region USERS
 
-        [HttpPost("createUser")]
-        public ActionResult<bool> CreateUser([FromBody] NewUserModel user)
+        [HttpPost("createUser/{idAdmin}")]
+        public ActionResult<bool> CreateUser([FromBody] NewUserModel user, int idAdmin)
         {
-            return Ok(_userSvc.CreateUser(user));
+            return Ok(_userSvc.CreateUser(user, idAdmin));
         }
 
         [HttpPost("updateUser/{idUserUpdate}")]

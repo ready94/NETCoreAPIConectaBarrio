@@ -40,5 +40,11 @@ namespace NETCoreAPIConectaBarrio.Controllers
             return Ok(_userSvc.GetAllUsers());
         }
 
+        [HttpGet("getUserRoles")]
+        public ActionResult<List<UserRolesDTO>> GetAllUserRoles()
+        {
+            return Ok(_userSvc.GetAllUserRoles());
+        }
+
     }
 }

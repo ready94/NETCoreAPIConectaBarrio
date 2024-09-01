@@ -13,7 +13,7 @@ namespace NETCoreAPIConectaBarrio.Models
         public string? Username { get; set; }
         public string? Password { get; set; }
         public string? Email { get; set; }
-        public int CreationUser { get; set; }
+        public int? CreationUser { get; set; }
         public DateTime CreationDate { get; set; }
         public int? ModificationUser { get; set; }
         public DateTime? ModificationDate { get; set;}
@@ -32,7 +32,7 @@ namespace NETCoreAPIConectaBarrio.Models
             Username = row.Field<string?>("USERNAME");
             Password = row.Field<string?>("PASSWORD");
             Email = row.Field<string?>("EMAIL");
-            CreationUser = row.Field<int>("CREATION_USER");
+            CreationUser = row.Field<int?>("CREATION_USER");
             CreationDate = row.Field<DateTime>("CREATION_DATE");
             ModificationUser = row.Field<int?>("MODIFICATION_USER");
             ModificationDate = row.Field<DateTime?>("MODIFICATION_DATE");
