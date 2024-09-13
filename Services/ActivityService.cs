@@ -31,10 +31,10 @@ namespace NETCoreAPIConectaBarrio.Services
             return true;
         }
 
-        public bool DeleteActivity(int idactivity, int idUser)
+        public bool DeleteActivity(int idEvent, int idUser)
         {
             if (this._userSvc.GetUserRole(idUser) == EnumRoles.ADMIN)
-                return SQLConnectionHelper.DeleteBBDD(TABLE, ["IDEVENT"], [idactivity], [SQLRelationType.EQUAL]);
+                return SQLConnectionHelper.DeleteBBDD(TABLE, ["IDEVENT"], [idEvent], [SQLRelationType.EQUAL]);
             else
                 return false;
 

@@ -9,6 +9,6 @@ namespace NETCoreAPIConectaBarrio.Services.Interfaces
         bool DeleteNew(int idNew, int idUser);
         List<NewsModel> GetAllNews();
         NewsModel GetNewData(int idNew);
-        bool UpdateNew(NewsModel news, int idUser);
+        bool UpdateNew(NewsModel news, int idUser, int idNew);
     }
 }

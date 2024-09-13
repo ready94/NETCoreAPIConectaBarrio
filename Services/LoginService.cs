@@ -60,18 +60,32 @@ namespace NETCoreAPIConectaBarrio.Services
             DataRow? row = SQLConnectionHelper.GetResult("SYS_T_USERS", [.. fields], [.. values], [.. relations]);
             if (row != null)
             {
-                LoginDTO loginDto = new()
+                if (row.Field<int>("IS_BLOCKED") == 1)
                 {
-                    IdUser = row.Field<int>("IDUSER"),
-                    UserName = row.Field<string>("USERNAME"),
-                    IdRole = row.Field<EnumRoles>("IDROLE")
-                };
+                    res.Success = false;
+                    res.Result = null;
+                    res.Msg = "LOGIN.ACTIONS.ERROR.LOCKED";
+                }
+                else {
+                    LoginDTO loginDto = new()
+                    {
+                        IdUser = row.Field<int>("IDUSER"),
+                        UserName = row.Field<string>("USERNAME"),
+                        IdRole = row.Field<EnumRoles>("IDROLE")
+                    };
 
-                res.Success = true;
-                res.Result = loginDto;
-                res.Msg = "";
-
-                SQLConnectionHelper.UpdateBBDD("SYS_T_USERS", ["IP"], [login.Ip], [.. fields], [.. values], [.. relations]);
+                    res.Success = true;
+                    res.Result = loginDto;
+                    res.Msg = "";
+                
+                    SQLConnectionHelper.UpdateBBDD("SYS_T_USERS", ["IP"], [login.Ip], [.. fields], [.. values], [.. relations]);
+                }
+            }
+            else
+            {
+                res.Success = false;
+                res.Result = null;
+                res.Msg = "LOGIN.ACTIONS.ERROR.WRONG_DATA";
             }
             return res;
         }

@@ -77,8 +77,8 @@ namespace NETCoreAPIConectaBarrio.Controllers
             return result;
         }
 
-        [HttpDelete("deleteEventByIdEvent/{idEvent}/{idUser}")]
-        public ActionResult<bool> DeleteEvent(int idEvent, int idUser)
+        [HttpPost("deleteEventByIdEvent/{idUser}")]
+        public ActionResult<bool> DeleteEvent([FromBody] int idEvent, int idUser)
         {
             bool result = false;
             try

@@ -4,16 +4,14 @@ using NETCoreAPIConectaBarrio.Helpers;
 using NETCoreAPIConectaBarrio.Models;
 using NETCoreAPIConectaBarrio.Services.Interfaces;
 using System.Data;
+using System.Data.Entity;
 
 namespace NETCoreAPIConectaBarrio.Services
 {
     public class UserService : IUserService
     {
         private const string TABLE = "SYS_T_USERS";
-        public bool BlockUser(int idAdmin, int idUser)
-        {
-            return SQLConnectionHelper.UpdateBBDD(TABLE, ["IS_BLOCKED", "MODIFICATION_DATE", "MODIFICATION_USER"], [true, DateTime.Now, idAdmin], ["IDUSER"], [idUser], [SQLRelationType.EQUAL]);
-        }
+    
 
         public ResponseResult<bool> CreateUser(NewUserModel user, int idAdmin)
         {
@@ -93,21 +91,25 @@ namespace NETCoreAPIConectaBarrio.Services
             return user;
         }
 
-        public bool UnblockUser(int idAdmin, int idUser)
+        public bool UnblockUser(UserModel user, int idAdmin)
         {
-            return SQLConnectionHelper.UpdateBBDD(TABLE, ["IS_BLOCKED", "MODIFICATION_DATE", "MODIFICATION_USER"], [0, DateTime.Now, idAdmin], ["IDUSER"], [idUser], [SQLRelationType.EQUAL]);
+            return SQLConnectionHelper.UpdateBBDD(TABLE, ["IS_BLOCKED", "MODIFICATION_DATE", "MODIFICATION_USER"], [0, DateTime.Now, idAdmin], ["IDUSER"], [user.IdUser], [SQLRelationType.EQUAL]);
+        }
+        public bool BlockUser(UserModel user, int idAdmin)
+        {
+            return SQLConnectionHelper.UpdateBBDD(TABLE, ["IS_BLOCKED", "MODIFICATION_DATE", "MODIFICATION_USER"], [1, DateTime.Now, idAdmin], ["IDUSER"], [user.IdUser], [SQLRelationType.EQUAL]);
         }
 
-        public bool UpdateUser(UserModel user, int idUserUpdate)
+        public bool UpdateUser(UserModel user, int idAdmin, int idUser)
         {
             bool res = false;
 
             if (user != null)
             {
                 string[] fields = ["IDROLE", "NAME", "SURNAME", "USERNAME", "PASSWORD", "EMAIL", "MODIFICATION_USER", "MODIFICATION_DATE", "ACTIVE", "IS_BLOCKED"];
-                object[] values = [user.IdRole, user.Name, user.Surname, user.Username, user.Password, user.Email, idUserUpdate, DateTime.Now, user.Active, user.IsBlocked];
+                object[] values = [(int)user.IdRole, user.Name, user.Surname, user.Username, user.Password, user.Email, idAdmin, DateTime.Now, user.Active, user.IsBlocked];
                 string[] fieldsFilter = ["IDUSER"];
-                object[] valuesFilter = [user.IdUser];
+                object[] valuesFilter = [idUser];
                 res = SQLConnectionHelper.UpdateBBDD(TABLE, fields, values, fieldsFilter, valuesFilter, [SQLRelationType.EQUAL]);
             }
             return res;
@@ -182,5 +184,12 @@ namespace NETCoreAPIConectaBarrio.Services
             return roles;
         }
 
+        public bool DeleteUser(UserModel user, int idAdmin)
+        {
+            if (this.GetUserRole(idAdmin) == EnumRoles.ADMIN)
+                return SQLConnectionHelper.DeleteBBDD(TABLE, ["IDUSER"], [user.IdUser], [SQLRelationType.EQUAL]);
+            else
+               return false;
+        }
     }
 }

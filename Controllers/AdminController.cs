@@ -38,22 +38,22 @@ namespace NETCoreAPIConectaBarrio.Controllers
             return Ok(_userSvc.CreateUser(user, idAdmin));
         }
 
-        [HttpPost("updateUser/{idUserUpdate}")]
-        public ActionResult<bool> UpdateUser([FromBody] UserModel user, int idUserUpdate)
+        [HttpPost("updateUser/{idAdmin}/{idUser}")]
+        public ActionResult<bool> UpdateUser([FromBody] UserModel user, int idAdmin, int idUser)
         {
-            return Ok(_userSvc.UpdateUser(user, idUserUpdate));
+            return Ok(_userSvc.UpdateUser(user, idAdmin, idUser));
         }
 
-        [HttpGet("blockUser/{idAdmin}/{idUser}")]
-        public ActionResult<bool> BlockUser(int idAdmin, int idUser)
+        [HttpPost("blockUser/{idAdmin}")]
+        public ActionResult<bool> BlockUser([FromBody] UserModel user, int idAdmin)
         {
-            return Ok(_userSvc.BlockUser(idAdmin, idUser));
+            return Ok(_userSvc.BlockUser(user, idAdmin));
         }
 
-        [HttpGet("unblockUser/{idAdmin}/{idUser}")]
-        public ActionResult<bool> UnblockUser(int idAdmin, int idUser)
+        [HttpPost("unblockUser/{idAdmin}")]
+        public ActionResult<bool> UnblockUser([FromBody] UserModel user, int idAdmin)
         {
-            return Ok(_userSvc.UnblockUser(idAdmin, idUser));
+            return Ok(_userSvc.UnblockUser(user, idAdmin));
         }
 
         [HttpGet("getUserData/{idUser}")]
@@ -68,6 +68,12 @@ namespace NETCoreAPIConectaBarrio.Controllers
             return Ok(_userSvc.GetAllUsers());
         }
 
+        [HttpPost("deleteUser/{idAdmin}")]
+        public ActionResult<bool> DeleteUser([FromBody] UserModel user, int idAdmin)
+        {
+            return Ok(_userSvc.DeleteUser(user, idAdmin));
+        }
+
         #endregion
 
         #region NEWS
@@ -78,10 +84,10 @@ namespace NETCoreAPIConectaBarrio.Controllers
             return Ok(_newsSvc.CreateNew(news, idUser));
         }
 
-        [HttpPost("updateNew/{idUser}")]
-        public ActionResult<bool> UpdateNew([FromBody] NewsModel news, int idUser)
+        [HttpPost("updateNew/{idUser}/{idNew}")]
+        public ActionResult<bool> UpdateNew([FromBody] NewsModel news, int idUser, int idNew)
         {
-            return Ok(_newsSvc.UpdateNew(news, idUser));
+            return Ok(_newsSvc.UpdateNew(news, idUser, idNew));
         }
 
         [HttpPost("deleteNew/{idUser}")]
@@ -111,16 +117,16 @@ namespace NETCoreAPIConectaBarrio.Controllers
             return Ok(_complaintSvc.CreateComplaint(complaint, idUser));
         }
 
-        [HttpPost("updateComplaint/{idUser}")]
-        public ActionResult<bool> UpdateComplaint([FromBody] ComplaintModel complaint, int idUser)
+        [HttpPost("updateComplaint/{idUser}/{idComplaint}")]
+        public ActionResult<bool> UpdateComplaint([FromBody] ComplaintModel complaint, int idUser, int idComplaint)
         {
-            return Ok(_complaintSvc.UpdateComplaint(complaint, idUser));
+            return Ok(_complaintSvc.UpdateComplaint(complaint, idUser, idComplaint));
         }
 
         [HttpPost("deleteComplaint/{idUser}")]
         public ActionResult<bool> DeleteComplaint([FromBody] int idComplaint, int idUser)
         {
-            return Ok(_complaintSvc.DeleteComplaint(idComplaint, idUser));
+            return Ok(_complaintSvc.DeleteComplaint(idUser, idComplaint));
         }
 
         [HttpGet("getComplaint/{idComplaint}")]
@@ -199,8 +205,8 @@ namespace NETCoreAPIConectaBarrio.Controllers
             return result;
         }
 
-        [HttpDelete("deleteEventByIdEvent/{idEvent}/{idUser}")]
-        public ActionResult<bool> DeleteEvent(int idEvent, int idUser)
+        [HttpPost("deleteActivity/{idUser}")]
+        public ActionResult<bool> DeleteEvent([FromBody] int idEvent, int idUser)
         {
             bool result = false;
             try

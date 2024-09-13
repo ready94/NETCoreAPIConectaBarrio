@@ -22,16 +22,16 @@ namespace NETCoreAPIConectaBarrio.Controllers
             return Ok(_complaintSvc.CreateComplaint(complaint, idUser));
         }
 
-        [HttpPost("updateComplaint/{idUser}")]
-        public ActionResult<bool> UpdateComplaint([FromBody] ComplaintModel complaint, int idUser)
+        [HttpPost("updateComplaint/{idUser}/{idComplaint}")]
+        public ActionResult<bool> UpdateComplaint([FromBody] ComplaintModel complaint, int idUser, int idComplaint)
         {
-            return Ok(_complaintSvc.UpdateComplaint(complaint, idUser));
+            return Ok(_complaintSvc.UpdateComplaint(complaint, idUser, idComplaint));
         }
 
         [HttpPost("deleteComplaint/{idUser}")]
         public ActionResult<bool> DeleteComplaint([FromBody] int idComplaint, int idUser)
         {
-            return Ok(_complaintSvc.DeleteComplaint(idComplaint, idUser));
+            return Ok(_complaintSvc.DeleteComplaint(idUser, idComplaint));
         }
 
         [HttpGet("getComplaint/{idComplaint}")]

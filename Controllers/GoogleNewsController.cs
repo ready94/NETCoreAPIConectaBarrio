@@ -4,6 +4,9 @@ using NETCoreAPIConectaBarrio.Helpers;
 using NETCoreAPIConectaBarrio.Models;
 using NETCoreAPIConectaBarrio.Services.Interfaces;
 using System.Data;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 
@@ -13,8 +16,6 @@ namespace NETCoreAPIConectaBarrio.Controllers
     [Route("[controller]")]
     public class GoogleNewsController : ControllerBase
     {
-        private readonly HttpClient _httpClient = new HttpClient();
-
         public GoogleNewsController()
         {
         }
@@ -22,31 +23,39 @@ namespace NETCoreAPIConectaBarrio.Controllers
         [HttpGet("getAllNews")]
         public async Task<IActionResult> GetAllNews()
         {
-            var query = "Barrio del Pilar Madrid";
-            var fromDate = DateTime.Now.AddDays(-1).ToString("dd-MM-yyyy");
-            var apiKey = "f32ef93528414f4082a753abd51e79bc";
-            var url = $"https://newsapi.org/v2/everything?q={query}&from={fromDate}&sortBy=publishedAt&apiKey={apiKey}";
-            var request = new HttpRequestMessage(HttpMethod.Get, url) ;
-            request.Headers.UserAgent.ParseAdd("ConectaBarrio/1.0");
-            var response = await _httpClient.SendAsync(request);
-
-            if(!response.IsSuccessStatusCode)
+            var handler = new SocketsHttpHandler
             {
-                return StatusCode((int)response.StatusCode, await response.Content.ReadAsStringAsync());
+                SslOptions = new System.Net.Security.SslClientAuthenticationOptions
+                {
+                    EnabledSslProtocols = System.Security.Authentication.SslProtocols.Tls12
+                },
+                AutomaticDecompression = System.Net.DecompressionMethods.GZip | System.Net.DecompressionMethods.Deflate
+            };
+
+            using (HttpClient client = new HttpClient(handler))
+            {
+                client.DefaultRequestVersion = new Version(2, 0); 
+                client.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionOrHigher;
+
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (compatible; ConectaBarrio/1.0)");
+
+                var query = "Barrio del Pilar Madrid";
+                var fromDate = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd");  
+                var apiKey = "f32ef93528414f4082a753abd51e79bc";
+                var url = $"https://newsapi.org/v2/everything?q={query}&from={fromDate}&sortBy=publishedAt&apiKey={apiKey}";
+
+                var response = await client.GetAsync(url);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return StatusCode((int)response.StatusCode, await response.Content.ReadAsStringAsync());
+                }
+
+                var newsContent = await response.Content.ReadAsStringAsync();
+                return Ok(newsContent);
             }
-           
-            var newsContent = await response.Content.ReadAsStringAsync();
 
-            //var options = new JsonSerializerOptions
-            //{
-            //    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            //    PropertyNameCaseInsensitive = true,
-            //    IgnoreNullValues = true
-            //};
-
-            //Article newsResponse = JsonSerializer.Deserialize<Article>(newsContent, options);
-
-            return Ok(newsContent);
         }
 
 
@@ -78,7 +87,8 @@ namespace NETCoreAPIConectaBarrio.Controllers
                 }
                 res = true;
 
-            }catch(Exception exc) { throw new Exception($"Error en SaveGoogleNews() => " + exc.Message, exc); }
+            }
+            catch (Exception exc) { throw new Exception($"Error en SaveGoogleNews() => " + exc.Message, exc); }
 
             return res;
         }
@@ -90,7 +100,8 @@ namespace NETCoreAPIConectaBarrio.Controllers
             return secondRes;
         }
 
-        private string RemoveSpecialCharacters(string str) {
+        private string RemoveSpecialCharacters(string str)
+        {
             StringBuilder sb = new StringBuilder();
             foreach (char c in str)
             {

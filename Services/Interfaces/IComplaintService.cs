@@ -9,6 +9,6 @@ namespace NETCoreAPIConectaBarrio.Services.Interfaces
         bool DeleteComplaint(int idUser, int idComplaint);
         List<ComplaintModel> GetAllComplaints();
         ComplaintModel? GetComplaint(int idComplaint);
-        bool UpdateComplaint(ComplaintModel complaint, int idUser);
+        bool UpdateComplaint(ComplaintModel complaint, int idUser, int idComplaint);
     }
 }

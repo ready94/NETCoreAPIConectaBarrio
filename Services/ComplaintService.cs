@@ -36,9 +36,9 @@ namespace NETCoreAPIConectaBarrio.Services
         {
             // Si el usuario es admin, se hace un borrado fisico, si no, un borrado logico
             if (this._userSvc.GetUserRole(idUser) == EnumRoles.ADMIN)
-                return SQLConnectionHelper.DeleteBBDD(TABLE, ["IDCOMPLAINT_TYPE"], [idComplaint], [SQLRelationType.EQUAL]);
+                return SQLConnectionHelper.DeleteBBDD(TABLE, ["IDCOMPLAINT"], [idComplaint], [SQLRelationType.EQUAL]);
             else
-                return SQLConnectionHelper.UpdateBBDD(TABLE, ["ACTIVE"], [0], ["IDCOMPLAINT_TYPE"], [idComplaint], [SQLRelationType.EQUAL]);
+                return SQLConnectionHelper.UpdateBBDD(TABLE, ["ACTIVE"], [0], ["IDCOMPLAINT"], [idComplaint], [SQLRelationType.EQUAL]);
         }
 
         public List<ComplaintModel> GetAllComplaints()
@@ -59,14 +59,14 @@ namespace NETCoreAPIConectaBarrio.Services
             return new ComplaintModel(row);
         }
 
-        public bool UpdateComplaint(ComplaintModel complaint, int idUser)
+        public bool UpdateComplaint(ComplaintModel complaint, int idUser, int idComplaint)
         {
             if (complaint != null)
             {
                 string[] fields = ["IDCOMPLAINT_TYPE", "IDPRIORITY", "COMPLAINT_TITLE", "COMPLAINT_DESCRIPTION", "MODIFICATION_USER", "MODIFICATION_DATE", "ACTIVE"];
-                object[] values = [complaint.IdComplaintType, complaint.IdPriority, complaint.Title, complaint.Description, idUser, DateTime.Now, complaint.Active];
+                object[] values = [(int)complaint.IdComplaintType, (int)complaint.IdPriority, complaint.Title, complaint.Description, idUser, DateTime.Now, 1];
                 string[] fieldsFilter = ["IDCOMPLAINT"];
-                object[] valuesFilter = [complaint.IdComplaint];
+                object[] valuesFilter = [idComplaint];
 
                 return SQLConnectionHelper.UpdateBBDD(TABLE, fields, values, fieldsFilter, valuesFilter, [SQLRelationType.EQUAL]);
             }

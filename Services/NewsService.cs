@@ -51,11 +51,11 @@ namespace NETCoreAPIConectaBarrio.Services
             return res;
         }
 
-        public bool UpdateNew(NewsModel news, int idUser)
+        public bool UpdateNew(NewsModel news, int idUser, int idNew)
         {
             string[] fields = ["IDCATEGORY", "NAME", "DESCRIPTION", "MODIFICATION_USER", "MODIFICATION_DATE", "START_DATE", "END_DATE", "ACTIVE"];
-            object[] values = [news.IdCategory, news.Name, news.Description, idUser, DateTime.Now, news.StartDate, news.EndDate, news.Active];
-            return SQLConnectionHelper.UpdateBBDD(TABLE, fields, values, ["IDNEW"], [news.IdNew], [SQLRelationType.EQUAL]);
+            object[] values = [(int)news.IdCategory, news.Name, news.Description, idUser, DateTime.Now, news.StartDate, news.EndDate, 1];
+            return SQLConnectionHelper.UpdateBBDD(TABLE, fields, values, ["IDNEW"], [idNew], [SQLRelationType.EQUAL]);
         }
     }
 }

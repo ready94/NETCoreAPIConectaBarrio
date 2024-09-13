@@ -7,7 +7,7 @@ namespace NETCoreAPIConectaBarrio.Services.Interfaces
     public interface IActivityService
     {
         bool CreateActivity(ActivityModel activity);
-        bool DeleteActivity(int idActivity, int idUser);
+        bool DeleteActivity(int idEvent, int idUser);
         List<ActivityModel> GetAllEventsFiltered(FilterModel filters);
         List<ActivityModel> GetAllAvailableEvents();
         ActivityModel GetEventByIdEvent(int idEvent);

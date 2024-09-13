@@ -23,10 +23,10 @@ namespace NETCoreAPIConectaBarrio.Controllers
             return Ok(_newsSvc.CreateNew(news, idUser));
         }
 
-        [HttpPost("updateNew/{idUser}")]
-        public ActionResult<bool> UpdateNew([FromBody] NewsModel news, int idUser)
+        [HttpPost("updateNew/{idUser}/{idNew}")]
+        public ActionResult<bool> UpdateNew([FromBody] NewsModel news, int idUser, int idNew)
         {
-            return Ok(_newsSvc.UpdateNew(news, idUser));
+            return Ok(_newsSvc.UpdateNew(news, idUser, idNew));
         }
 
         [HttpPost("deleteNew/{idUser}")]
